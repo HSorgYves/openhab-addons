@@ -134,6 +134,11 @@ public class ApiHttpClient {
         return request(HttpMethod.POST, uri, "", headers, buildPostData(data, json), "", "", followRedirect);
     }
 
+    public ApiResult post(String uri, String vin, Map<String, String> headers, Map<String, String> data, boolean json,
+            boolean followRedirect) throws ApiException {
+        return request(HttpMethod.POST, uri, "", headers, buildPostData(data, json), vin, "", followRedirect);
+    }
+
     private ApiResult request(HttpMethod method, String uri, String parms, Map<String, String> headers, String data,
             String pvin, String token) throws ApiException {
         return request(method, uri, parms, headers, data, pvin, token, true);

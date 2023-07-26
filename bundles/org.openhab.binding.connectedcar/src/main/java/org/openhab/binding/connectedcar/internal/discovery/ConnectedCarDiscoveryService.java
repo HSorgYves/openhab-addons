@@ -71,6 +71,7 @@ public class ConnectedCarDiscoveryService extends AbstractDiscoveryService imple
             Map<String, Object> properties = new TreeMap<String, Object>();
             ThingTypeUID tuid;
             switch (vehicle.brand) {
+                case API_BRAND_AUDI:
                 case API_BRAND_VWID:
                     tuid = THING_TYPE_IDVEHICLE;
                     break;

@@ -36,15 +36,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link BrandWeConnect} provides the VW ID.3/ID.4 specific functions of the API
+ * {@link BrandWeConnectVW} provides the VW ID.3/ID.4 specific functions of the API
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
  * @author Dr. Yves Kreis - Maintainer
  */
 @NonNullByDefault
-public class BrandWeConnect extends WeConnectApi implements BrandAuthenticator {
-    private final Logger logger = LoggerFactory.getLogger(BrandWeConnect.class);
+public class BrandWeConnectVW extends WeConnectApi implements BrandAuthenticator {
+    private final Logger logger = LoggerFactory.getLogger(BrandWeConnectVW.class);
     static ApiBrandProperties properties = new ApiBrandProperties();
     static {
         properties.brand = API_BRAND_VWID;
@@ -71,7 +71,7 @@ public class BrandWeConnect extends WeConnectApi implements BrandAuthenticator {
         properties.stdHeaders.put(HttpHeader.ACCEPT_LANGUAGE.toString(), "de-de");
     }
 
-    public BrandWeConnect(ThingHandlerInterface handler, ApiHttpClient httpClient, IdentityManager tokenManager,
+    public BrandWeConnectVW(ThingHandlerInterface handler, ApiHttpClient httpClient, IdentityManager tokenManager,
             @Nullable ApiEventListener eventListener) {
         super(handler, httpClient, tokenManager, eventListener);
     }

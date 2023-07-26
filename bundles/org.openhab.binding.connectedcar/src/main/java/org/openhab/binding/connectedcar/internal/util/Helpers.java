@@ -28,7 +28,10 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Formatter;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import javax.measure.Unit;
 import javax.xml.bind.DatatypeConverter;
 
@@ -315,6 +318,33 @@ public class Helpers {
         String dateTimeString = Long.toString(new Date().getTime());
         byte[] nonceBytes = dateTimeString.getBytes();
         return Base64.getEncoder().encodeToString(nonceBytes);
+    }
+
+    /**
+     * Generate a QMAuth value
+     *
+     * @return new QMAuth
+     */
+    public static String generateQMAuth() {
+        String timestamp = Long.toString(Instant.now().getEpochSecond() / 100);
+        byte[] xqmauth_secret = { 26, -74, -103, 37, -84, 23, -102, -86, 78, -125, -85, -26, 113, -87, 71, 109, 23, 100,
+                24, -72, 91, -41, 6, -15, 67, 108, -95, 91, -26, 71, -104, -100 };
+        String xqmauth_val = "";
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(xqmauth_secret, "HmacSHA256"));
+            xqmauth_val = toHexString(mac.doFinal(timestamp.getBytes()));
+        } catch (Exception e) {
+        }
+        return xqmauth_val;
+    }
+
+    private static String toHexString(byte[] bytes) {
+        Formatter formatter = new Formatter();
+        for (byte b : bytes) {
+            formatter.format("%02x", b);
+        }
+        return formatter.toString();
     }
 
     /**

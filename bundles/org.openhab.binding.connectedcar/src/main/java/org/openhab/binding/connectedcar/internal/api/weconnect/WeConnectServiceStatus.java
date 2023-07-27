@@ -86,6 +86,12 @@ public class WeConnectServiceStatus extends ApiBaseService {
         addChannels(channels, CHANNEL_GROUP_STATUS, true, CHANNEL_STATUS_ERROR);
         addChannels(channels, CHANNEL_GROUP_RANGE, status.fuelStatus != null && status.fuelStatus.rangeStatus != null
                 && status.fuelStatus.rangeStatus.value != null, CHANNEL_RANGE_TOTAL, CHANNEL_RANGE_PRANGE);
+        addChannels(channels, CHANNEL_GROUP_RANGE,
+                status.fuelStatus != null && status.fuelStatus.rangeStatus != null
+                        && status.fuelStatus.rangeStatus.value != null
+                        && status.fuelStatus.rangeStatus.value.primaryEngine != null
+                        && status.fuelStatus.rangeStatus.value.primaryEngine.currentFuelLevel_pct != null,
+                CHANNEL_RANGE_FUEL);
         addChannels(channels, CHANNEL_GROUP_CHARGER, status.charging != null && status.charging.batteryStatus != null,
                 CHANNEL_CHARGER_CHGLVL);
 
@@ -112,6 +118,14 @@ public class WeConnectServiceStatus extends ApiBaseService {
                         && status.vehicleHealthInspection.maintenanceStatus.value != null,
                 CHANNEL_STATUS_ODOMETER, CHANNEL_MAINT_DISTINSP, CHANNEL_MAINT_DISTTIME, CHANNEL_MAINT_OILDIST,
                 CHANNEL_MAINT_OILINTV);
+        addChannels(channels, CHANNEL_GROUP_MAINT,
+                status.measurements != null && status.measurements.rangeStatus != null
+                        && status.measurements.rangeStatus.value != null
+                        && status.measurements.rangeStatus.value.adBlueRange != null,
+                CHANNEL_MAINT_ABDIST);
+        addChannels(channels, CHANNEL_GROUP_MAINT, status.oilLevel != null && status.oilLevel.oilLevelStatus != null
+                && status.oilLevel.oilLevelStatus.value != null && status.oilLevel.oilLevelStatus.value.value != null,
+                CHANNEL_MAINT_OILWARNLVL);
         addChannels(
                 channels, CHANNEL_GROUP_STATUS, status.vehicleLights != null
                         && status.vehicleLights.lightsStatus != null && status.vehicleLights.lightsStatus.value != null,
@@ -167,6 +181,11 @@ public class WeConnectServiceStatus extends ApiBaseService {
                     getDecimal(status.fuelStatus.rangeStatus.value.totalRange_km));
             updated |= updateChannel(CHANNEL_RANGE_PRANGE,
                     getDecimal(status.fuelStatus.rangeStatus.value.primaryEngine.remainingRange_km));
+            if (status.fuelStatus.rangeStatus.value != null && status.fuelStatus.rangeStatus.value.primaryEngine != null
+                    && status.fuelStatus.rangeStatus.value.primaryEngine.currentFuelLevel_pct != null) {
+                updated |= updateChannel(CHANNEL_RANGE_FUEL,
+                        getDecimal(status.fuelStatus.rangeStatus.value.primaryEngine.currentFuelLevel_pct));
+            }
         }
         return updated;
     }
@@ -197,7 +216,9 @@ public class WeConnectServiceStatus extends ApiBaseService {
                 if ("maximum".equalsIgnoreCase(maxCurrent)) {
                     maxCurrent = "255";
                 }
-                if (Character.isDigit(maxCurrent.charAt(0))) {
+                if ("".equals(maxCurrent)) {
+                    updated |= updateChannel(CHANNEL_GROUP_CHARGER, CHANNEL_CHARGER_MAXCURRENT, UnDefType.UNDEF);
+                } else if (Character.isDigit(maxCurrent.charAt(0))) {
                     updated |= updateChannel(CHANNEL_GROUP_CHARGER, CHANNEL_CHARGER_MAXCURRENT,
                             getDecimal(Integer.parseInt(maxCurrent)));
                 } else {
@@ -269,6 +290,16 @@ public class WeConnectServiceStatus extends ApiBaseService {
             updated |= updateChannel(CHANNEL_MAINT_DISTTIME, getDecimal(data.inspectionDueDays));
             updated |= updateChannel(CHANNEL_MAINT_OILDIST, getDecimal(data.oilServiceDueKm));
             updated |= updateChannel(CHANNEL_MAINT_OILINTV, getDecimal(data.oilServiceDueDays));
+        }
+        if (status.measurements != null && status.measurements.rangeStatus != null
+                && status.measurements.rangeStatus.value != null
+                && status.measurements.rangeStatus.value.adBlueRange != null) {
+            updated |= updateChannel(CHANNEL_MAINT_ABDIST,
+                    getDecimal(status.measurements.rangeStatus.value.adBlueRange));
+        }
+        if (status.oilLevel != null && status.oilLevel.oilLevelStatus != null
+                && status.oilLevel.oilLevelStatus.value != null && status.oilLevel.oilLevelStatus.value.value != null) {
+            updated |= updateChannel(CHANNEL_MAINT_OILWARNLVL, getOnOff(!status.oilLevel.oilLevelStatus.value.value));
         }
         return updated;
     }

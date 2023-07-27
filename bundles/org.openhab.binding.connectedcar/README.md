@@ -386,6 +386,7 @@ For other models select the Volkswagen (CarNet) account thing type (see above fo
 Some verified vehicles:
 * Volkswagen ID.3 Pro Performance (2022)
 * Audi A7 Sportback (2019)
+* Audi e-tron (2019)
 
 ### VW ID. Account Thing (vwid)
 
@@ -428,6 +429,7 @@ If you don't already have one you need to create a Volkswagen ID and add the veh
 |             | lockState*                | Switch               | yes       | ON: Plug is locked, OFF: Plug is unlocked and can be removed                            |
 | range       | totalRange* **            | Number:Length        | yes       | Total remaining range.                                                                  |
 |             | primaryRange* **          | Number:Length        | yes       | Range of the primary engine                                                             |
+|             | fuelPercentage**          | Number:Dimensionless | yes       | Percentage of fuel remaining.                                                           |
 | climater    | climatisationState*       | Switch               | yes       | ON: Climatisation is active                                                             |
 |             | remainingClimatisation*   | Number:Time          | yes       | Remaining time for climatisation                                                        |
 | maintenance | odometer* **              | Number:Length        | yes       | The overall distance of the odometer when status was captured                           |
@@ -435,6 +437,8 @@ If you don't already have one you need to create a Volkswagen ID and add the veh
 |             | timeToInspection* **      | Number:Time          | yes       | Time until next inspection.                                                             |
 |             | distanceOilChange* **     | Number:Length        | yes       | Distance until the next oil change is required.                                         |
 |             | intervalOilChange* **     | Number:Time          | yes       | Distance until next oil change                                                          |
+|             | distanceAdBlue**          | Number:Length        | yes       | Distance before the next Ad Blue fill-up is required.                                   |
+|             | oilWarningLevel**         | Switch               | yes       | Minimum oil warning level                                                               |
 | doors       | doorFrontLeftState* **    | Contact              | yes       | State: OPEN or CLOSED                                                                   |
 |             | doorFrontLeftLocked* **   | Switch               | yes       | ON: The left front door is locked                                                       |
 |             | doorFrontRightState* **   | Contact              | yes       | State: OPEN or CLOSED                                                                   |
@@ -455,7 +459,7 @@ If you don't already have one you need to create a Volkswagen ID and add the veh
 |             | sunRoofCoverState* **     | Contact              | yes       | Rear roof cover state: OPEN or CLOSED                                                   |
 | pictures    | imageUrl1..n              | String               | no        | URL to vehicle picture(s)                                                               |
 
-* \* Volkswagen ID.3 Pro Performance (2022)
+* \* Volkswagen ID.3 Pro Performance (2022) / Audi e-tron (2019)
 * ** Audi A7 Sportback (2019)
 
 ## Skoda Electrical Vehicles

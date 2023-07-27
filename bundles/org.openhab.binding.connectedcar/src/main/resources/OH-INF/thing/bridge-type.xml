@@ -5,10 +5,10 @@
 	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
 	<bridge-type id="myaudi">
-		<label>myAudi Account (CarNet)</label>
-		<description>This thing represents a myAudi CarNet Account.</description>
+		<label>myAudi Account (WeConnect)</label>
+		<description>This thing represents a myAudi WeConnect Account.</description>
 
-		<config-description-ref uri="bridge-type:connectedcar:cnaccount"/>
+		<config-description-ref uri="bridge-type:connectedcar:idaccount"/>
 	</bridge-type>
 
 	<bridge-type id="volkswagen">
@@ -26,7 +26,7 @@
 
 	<bridge-type id="wecharge">
 		<label>Volkswagen ID.Charge Account (WeCharge)</label>
-		<description>This thing represents a WeCharge Account.</description>
+		<description>This thing represents a VW WeCharge Account.</description>
 		<config-description-ref uri="bridge-type:connectedcar:wcaccount"/>
 	</bridge-type>
 

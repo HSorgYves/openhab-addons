@@ -308,6 +308,7 @@ public class WeConnectApiJsonDTO {
                 public String type;
                 public Integer currentSOC_pct;
                 public Integer remainingRange_km;
+                public Integer currentFuelLevel_pct;
             }
 
             public String carCapturedTimestamp;
@@ -447,6 +448,64 @@ public class WeConnectApiJsonDTO {
             public WCWindowHeatingStatusValue windowHeatingStatus;
         }
 
+        public class WCMeasurementsRangeStatus {
+            /*
+             * ID.3 Pro Performance:
+             * "electricRange": 166
+             *
+             * Audi A7 Sportback:
+             * "adBlueRange": 6000
+             * "dieselRange": 660
+             *
+             * Audi e-tron:
+             * "electricRange": 166
+             */
+
+            public Integer electricRange;
+            public Integer adBlueRange;
+            public Integer dieselRange;
+        }
+
+        public class WCMeasurementsOdometerStatus {
+            /*
+             * ID.3 Pro Performance:
+             * "odometer": 6848
+             *
+             * Audi A7 Sportback:
+             * "odometer": 123388
+             *
+             * Audi e-tron:
+             * "odometer": 40096
+             */
+
+            public Integer odometer;
+        }
+
+        public class WCMeasurements {
+            public class WCMeasurementsRangeStatusValue {
+                public WCMeasurementsRangeStatus value;
+            }
+
+            public class WCMeasurementsOdometerStatusValue {
+                public WCMeasurementsOdometerStatus value;
+            }
+
+            public WCMeasurementsRangeStatusValue rangeStatus;
+            public WCMeasurementsOdometerStatusValue odometerStatus;
+        }
+
+        public class WCOilLevelStatus {
+            public Boolean value;
+        }
+
+        public class WCOilLevel {
+            public class WCOilLevelStatusValue {
+                public WCOilLevelStatus value;
+            }
+
+            public WCOilLevelStatusValue oilLevelStatus;
+        }
+
         public WCAccessStatusValue access;
         public WCVehicleLightsValue vehicleLights;
         public WCFuelStatus fuelStatus;
@@ -454,6 +513,8 @@ public class WeConnectApiJsonDTO {
         public WCVehicleHealthInspection vehicleHealthInspection;
         public WCCharging charging;
         public WCClimatistation climatisation;
+        public WCMeasurements measurements;
+        public WCOilLevel oilLevel;
     }
 
     public static class WCActionResponse {

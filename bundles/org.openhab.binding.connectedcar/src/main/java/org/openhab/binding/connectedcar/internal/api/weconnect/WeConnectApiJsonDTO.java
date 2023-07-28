@@ -459,11 +459,15 @@ public class WeConnectApiJsonDTO {
              *
              * Audi e-tron:
              * "electricRange": 166
+             *
+             * Audi Q3 Sportback:
+             * "gasolineRange": 65
              */
 
             public Integer electricRange;
             public Integer adBlueRange;
             public Integer dieselRange;
+            public Integer gasolineRange;
         }
 
         public class WCMeasurementsOdometerStatus {

@@ -21,16 +21,15 @@ import java.util.Comparator;
 import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.connectedcar.internal.api.ApiBaseService;
 import org.openhab.binding.connectedcar.internal.api.ApiException;
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CNSpeedAlerts.CarNetSpeedAlerts;
-import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CNSpeedAlerts.CarNetSpeedAlerts.CarNetpeedAlertEntry;
+import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CNSpeedAlerts.CarNetSpeedAlerts.CarNetSpeedAlertEntry;
 import org.openhab.binding.connectedcar.internal.handler.CarNetVehicleHandler;
 import org.openhab.binding.connectedcar.internal.provider.ChannelDefinitions.ChannelIdMapEntry;
 
 /**
- * {@link CarNetServiceSpeedAlerts} implements speedalert service.
+ * {@link CarNetServiceSpeedAlerts} implements speed-alert service.
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -61,25 +60,20 @@ public class CarNetServiceSpeedAlerts extends ApiBaseService {
 
     @Override
     public boolean serviceUpdate() throws ApiException {
-        return update(null);
+        return doUpdate();
     }
 
-    private boolean update(@Nullable Map<String, ChannelIdMapEntry> channels) throws ApiException {
+    private boolean doUpdate() throws ApiException {
         CarNetSpeedAlerts sa = ((CarNetApi) api).getSpeedAlerts();
         if (sa.speedAlert == null) {
             return false;
         }
-        Collections.sort(sa.speedAlert, Collections.reverseOrder(new Comparator<CarNetpeedAlertEntry>() {
-            @Override
-            public int compare(CarNetpeedAlertEntry a, CarNetpeedAlertEntry b) {
-                return a.occurenceDateTime.compareTo(b.occurenceDateTime);
-            }
-        }));
+        sa.speedAlert.sort(Collections.reverseOrder(Comparator.comparing(a -> a.occurenceDateTime)));
 
         boolean updated = false;
         int i = 0; // latest first
         int count = getConfig().vehicle.numSpeedAlerts;
-        for (CarNetpeedAlertEntry entry : sa.speedAlert) {
+        for (CarNetSpeedAlertEntry entry : sa.speedAlert) {
             if (++i > count) {
                 break;
             }

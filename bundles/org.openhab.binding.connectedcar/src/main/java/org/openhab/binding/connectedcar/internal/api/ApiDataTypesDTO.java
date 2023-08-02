@@ -74,7 +74,7 @@ public class ApiDataTypesDTO {
     public static final String API_SERVICE_VEHICLE_STATUS_REPORT = "status";
 
     public static final String API_STATUS_MSG_PREFIX = "api-status";
-    public static final String API_STATUS_CLASS_SECURUTY = "VSR.security";
+    public static final String API_STATUS_CLASS_SECURITY = "VSR.security";
     public static final String API_STATUS_GW_ERROR = "gw.error";
 
     public static final int API_FUEL_TYPE_NATGAS = 2;
@@ -144,23 +144,23 @@ public class ApiDataTypesDTO {
         public VehicleStatus() {
         }
 
-        public VehicleStatus(CarNetVehicleStatus status) {
+        public VehicleStatus(@Nullable CarNetVehicleStatus status) {
             cnStatus = status;
         }
 
-        public VehicleStatus(WCVehicleStatusData status) {
+        public VehicleStatus(@Nullable WCVehicleStatusData status) {
             wcStatus = status;
         }
 
-        public VehicleStatus(SEVehicleStatusData status) {
+        public VehicleStatus(@Nullable SEVehicleStatusData status) {
             seStatus = status;
         }
 
-        public VehicleStatus(FPVehicleStatusData status) {
+        public VehicleStatus(@Nullable FPVehicleStatusData status) {
             fpStatus = status;
         }
 
-        public VehicleStatus(WeChargeStatus status) {
+        public VehicleStatus(@Nullable WeChargeStatus status) {
             this.weChargeStatus = status;
         }
     }
@@ -211,7 +211,7 @@ public class ApiDataTypesDTO {
             return coordinate.latitude > 0 && coordinate.longitude > 0;
         }
 
-        public double getLattitude() {
+        public double getLatitude() {
             return coordinate.latitude / 1000000.0;
         }
 
@@ -220,7 +220,7 @@ public class ApiDataTypesDTO {
         }
 
         public PointType asPointType() {
-            return new PointType(new DecimalType(getLattitude()), new DecimalType(getLongitude()));
+            return new PointType(new DecimalType(getLatitude()), new DecimalType(getLongitude()));
         }
 
         public String getCarSentTime() {
@@ -238,7 +238,7 @@ public class ApiDataTypesDTO {
         public String action = "";
         public String requestId = ""; // request id returned from API
         public String checkUrl = ""; // URL to query request status
-        public String status = ""; // status code, usualle API_REQUEST_xxx
+        public String status = ""; // status code, usually API_REQUEST_xxx
         public String error = ""; // error message/details
         public Date creationTime = new Date();
         public long timeout = API_REQUEST_TIMEOUT_SEC;
@@ -264,9 +264,8 @@ public class ApiDataTypesDTO {
         }
 
         public static boolean isInProgress(String status) {
-            String st = status;
-            return API_REQUEST_IN_PROGRESS.equals(st) || API_REQUEST_QUEUED.equals(st) || API_REQUEST_FETCHED.equals(st)
-                    || API_REQUEST_STARTED.equals(st);
+            return API_REQUEST_IN_PROGRESS.equals(status) || API_REQUEST_QUEUED.equals(status)
+                    || API_REQUEST_FETCHED.equals(status) || API_REQUEST_STARTED.equals(status);
         }
 
         public boolean isInProgress() {

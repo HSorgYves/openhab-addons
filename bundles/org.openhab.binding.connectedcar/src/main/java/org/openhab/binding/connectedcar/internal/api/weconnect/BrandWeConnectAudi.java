@@ -23,12 +23,12 @@ import static org.openhab.binding.connectedcar.internal.api.weconnect.WeConnectA
 import static org.openhab.binding.connectedcar.internal.api.weconnect.WeConnectApiJsonDTO.WCVehicleList.WCVehicle;
 import static org.openhab.binding.connectedcar.internal.util.Helpers.fromJson;
 import static org.openhab.binding.connectedcar.internal.util.Helpers.generateQMAuth;
-import static org.openhab.binding.connectedcar.internal.util.Helpers.wrap;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -63,7 +63,6 @@ public class BrandWeConnectAudi extends WeConnectApi implements BrandAuthenticat
     static ApiBrandProperties properties = new ApiBrandProperties();
     static {
         properties.brand = API_BRAND_AUDI;
-        properties.apiDefaultUrl = "https://emea.bff.cariad.digital/vehicle/v1";
         properties.userAgent = "myAudi-Android/4.13.0 (Build 800236847.2111261819) Android/11";
         properties.xcountry = "DE";
         properties.apiDefaultUrl = WCAPI_BASE_URL;
@@ -142,8 +141,7 @@ public class BrandWeConnectAudi extends WeConnectApi implements BrandAuthenticat
                 .header(HttpHeader.ACCEPT.toString(), CONTENT_TYPE_JSON)
                 .header(HttpHeader.ACCEPT_CHARSET.toString(), StandardCharsets.UTF_8.toString()).data("query",
                         "query vehicleList { userVehicles { vin userRole { role } vehicle { media { shortName } } } }");
-        String json = callApi("", "https://app-api.live-my.audi.com/vgql/v1/graphql", map.getHeaders(), map.getData(),
-                "getVehicles", String.class);
+        String json = callApi(map.getHeaders(), map.getData());
         WCVehicle wev;
         ArrayList<String> list = new ArrayList<String>();
         for (JsonElement jsonElement : JsonParser.parseString(json).getAsJsonObject().getAsJsonObject("data")
@@ -160,51 +158,36 @@ public class BrandWeConnectAudi extends WeConnectApi implements BrandAuthenticat
         return list;
     }
 
-    protected <T> T callApi(String vin, String uri, Map<String, String> headers, Map<String, String> data,
-            String function, Class<T> classOfT) throws ApiException {
+    protected String callApi(Map<String, String> headers, Map<String, String> data) throws ApiException {
         String json = "";
         try {
-            ApiResult res = http.post(uri, vin, headers, data, true, true);
+            ApiResult res = http.post("https://app-api.live-my.audi.com/vgql/v1/graphql", headers, data, true);
             json = res.response;
             if (res.isRedirect()) {
                 // Handle redirect
                 String newLocation = res.getLocation();
                 logger.debug("{}: Handle HTTP Redirect -> {}", config.vehicle.vin, newLocation);
-                json = http.get(newLocation, vin, fillAppHeaders()).response;
+                json = http.get(newLocation, "", fillAppHeaders()).response;
             }
 
-            if (classOfT.isInstance(json)) {
-                // special case on target class == String (return raw info)
-                return wrap(classOfT).cast(json);
-            }
-            try {
-                return fromJson(gson, json, classOfT);
-            } catch (ApiException e) {
-                throw new ApiException("Error parsing JSON", res, e);
-            }
+            // special case on target class == String (return raw info)
+            return json;
         } catch (ApiException e) {
             ApiResult res = e.getApiResult();
             if (e.isSecurityException() || res.isHttpUnauthorized()) {
-                json = loadJson(function);
+                json = loadJson("getVehicles");
             }
 
             if ((json == null) || json.isEmpty()) {
-                logger.debug("{}: API call {} failed: {}", config.vehicle.vin, function, e.toString());
+                logger.debug("{}: API call {} failed: {}", config.vehicle.vin, "getVehicles", e.toString());
                 throw e;
             }
 
-            if (classOfT.isInstance(json)) {
-                // special case on target class == String (return raw info)
-                return wrap(classOfT).cast(json);
-            }
-            try {
-                return fromJson(gson, json, classOfT);
-            } catch (ApiException e2) {
-                throw new ApiException("Error parsing JSON", res, e);
-            }
+            // special case on target class == String (return raw info)
+            return json;
         } catch (RuntimeException e) {
-            logger.debug("{}: API call {} failed", config.vehicle.vin, function, e);
-            throw new ApiException("API call failes: RuntimeException", e);
+            logger.debug("{}: API call {} failed", config.vehicle.vin, "getVehicles", e);
+            throw new ApiException("API call fails: RuntimeException", e);
         }
     }
 
@@ -213,7 +196,7 @@ public class BrandWeConnectAudi extends WeConnectApi implements BrandAuthenticat
         if (vehicleData.containsKey(vin)) {
             WCVehicle vehicle = vehicleData.get(vin);
             VehicleDetails vehicleDetails = new VehicleDetails(config, vehicle);
-            vehicleDetails.model = vehicle.model;
+            vehicleDetails.model = Objects.requireNonNull(vehicle).model;
             return vehicleDetails;
         } else {
             throw new ApiException("Unknown VIN: " + vin);

@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.measure.IncommensurableException;
 
@@ -103,9 +104,6 @@ public class CarNetApi extends ApiWithOAuth {
 
     /**
      * Simple initialization, in fact used by Account Handler
-     *
-     * @param configIn
-     * @throws ApiException
      */
     @Override
     public void initialize(CombinedConfig configIn) throws ApiException {
@@ -124,7 +122,7 @@ public class CarNetApi extends ApiWithOAuth {
         // update based von VIN specific settings
         config.vehicle.vin = vin.toUpperCase();
         thingId = config.vehicle.vin;
-        config.vstatus.homeRegionUrl = getHomeReguionUrl();
+        config.vstatus.homeRegionUrl = getHomeRegionUrl();
         config.vstatus.apiUrlPrefix = getApiUrl();
 
         CarNetOperationList ol = getOperationList();
@@ -226,18 +224,18 @@ public class CarNetApi extends ApiWithOAuth {
 
     @Override
     public String refreshVehicleStatus() throws ApiException {
-        String json = http.post("bs/vsr/v1/{0}/{1}/vehicles/{2}/requests", fillAppHeaders(), "", "").response;
+        String json = http.post("bs/vsr/v1/{0}/{1}/vehicles/{2}/requests", fillAppHeaders(), "").response;
         return queuePendingAction(CNAPI_SERVICE_VEHICLE_STATUS_REPORT, "status", json);
     }
 
     @Override
-    public String getVehicleRequets() throws ApiException {
-        return http.post("bs/vsr/v1/{0}/{1}/vehicles/{2}/requests", fillAppHeaders(), "", "").response;
+    public String getVehicleRequests() throws ApiException {
+        return http.post("bs/vsr/v1/{0}/{1}/vehicles/{2}/requests", fillAppHeaders(), "").response;
     }
 
     @Override
     public GeoPosition getVehiclePosition() throws ApiException {
-        // needs explicit Accept: application/json, otherwhise storedPosition is returned
+        // needs explicit Accept: application/json, otherwise storedPosition is returned
         Map<String, String> headers = fillAppHeaders();
         headers.put(HttpHeader.ACCEPT.toString(), CONTENT_TYPE_JSON);
         return new GeoPosition(callApi("", "bs/cf/v1/{0}/{1}/vehicles/{2}/position", headers, "getVehiclePosition",
@@ -309,7 +307,7 @@ public class CarNetApi extends ApiWithOAuth {
         boolean secToken = !CNAPI_HEATER_SOURCE_ELECTRIC.equals(heaterSource);
         if (start) {
             if ((config.account.apiLevelClimatisation == 1) || heaterSource.isEmpty()) {
-                // simplified format without header source, Skoda?
+                // simplified format without header source, Škoda?
                 body = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><action><type>startClimatisation</type></action>";
             } else if (config.account.apiLevelClimatisation == 3) {
                 // standard format with header source, e.g. E-Tron
@@ -360,8 +358,6 @@ public class CarNetApi extends ApiWithOAuth {
             body = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
                     + "<performAction xmlns=\"http://audi.de/connect/rs\"><quickstart>" + "<active>"
                     + (start ? "true" : "false") + "</active>" + "</quickstart></performAction>";
-            return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/climater/actions", CNAPI_SERVICE_REMOTE_HEATING, action,
-                    true, contentType, body);
         } else {
             // Version 2.0.2 format
             contentType = "application/vnd.vwg.mbb.RemoteStandheizung_v2_0_2+json";
@@ -369,9 +365,9 @@ public class CarNetApi extends ApiWithOAuth {
                     ? "{\"performAction\":{\"quickstart\":{\"startMode\":\"heating\",\"active\":true,\"climatisationDuration\":"
                             + duration + "}}}"
                     : "{\"performAction\":{\"quickstop\":{\"active\":false}}}";
-            return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/climater/actions", CNAPI_SERVICE_REMOTE_HEATING, action,
-                    true, contentType, body);
         }
+        return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/climater/actions", CNAPI_SERVICE_REMOTE_HEATING, action, true,
+                contentType, body);
     }
 
     @Override
@@ -455,8 +451,7 @@ public class CarNetApi extends ApiWithOAuth {
     }
 
     public String getClimaterTimer() throws ApiException {
-        String json = callApi("bs/departuretimer/v1/{0}/{1}/vehicles/{2}/timer", "getClimaterTimer", String.class);
-        return json;
+        return callApi("bs/departuretimer/v1/{0}/{1}/vehicles/{2}/timer", "getClimaterTimer", String.class);
     }
 
     @Override
@@ -473,8 +468,6 @@ public class CarNetApi extends ApiWithOAuth {
      *
      * @param honk true=honk&flash, false=flash only
      * @param position Geo position of the vehicle
-     * @return
-     * @throws ApiException
      */
     @Override
     public String controlHonkFlash(boolean honk, PointType position, int duration) throws ApiException {
@@ -515,7 +508,7 @@ public class CarNetApi extends ApiWithOAuth {
             message = e.toString();
         }
         if (eventListener != null) {
-            eventListener.onActionNotification(service, action, message);
+            Objects.requireNonNull(eventListener).onActionNotification(service, action, message);
         }
         return API_REQUEST_REJECTED;
     }
@@ -534,9 +527,7 @@ public class CarNetApi extends ApiWithOAuth {
     }
 
     public String getTripStats(String tripType) throws ApiException {
-        String json = callApi("bs/tripstatistics/v1/{0}/{1}/vehicles/{2}/tripdata/" + tripType + "?newest", "",
-                String.class);
-        return json;
+        return callApi("bs/tripstatistics/v1/{0}/{1}/vehicles/{2}/tripdata/" + tripType + "?newest", "", String.class);
     }
 
     @Override
@@ -563,10 +554,9 @@ public class CarNetApi extends ApiWithOAuth {
      * Get OpenID Connect configuration
      *
      * @return OIDC config
-     * @throws ApiException
      */
     private CarNetOidcConfig getOidcConfig() throws ApiException {
-        // get OIDC confug
+        // get OIDC config
         String url = config.api.oidcConfigUrl;
         Map<String, String> headers = new LinkedHashMap<>();
         headers.put(HttpHeader.USER_AGENT.toString(), CNAPI_HEADER_USER_AGENT);
@@ -648,7 +638,7 @@ public class CarNetApi extends ApiWithOAuth {
     }
 
     @Override
-    public String getHomeReguionUrl() {
+    public String getHomeRegionUrl() {
         if (!config.vstatus.homeRegionUrl.isEmpty()) {
             return config.vstatus.homeRegionUrl;
         }
@@ -666,7 +656,7 @@ public class CarNetApi extends ApiWithOAuth {
 
     @Override
     public String getApiUrl() throws ApiException {
-        String url = getHomeReguionUrl();
+        String url = getHomeRegionUrl();
         config.vstatus.rolesRightsUrl = url;
         if (!CNAPI_VWG_MAL_1A_CONNECT.equalsIgnoreCase(url)) {
             // Change base url depending on country selector

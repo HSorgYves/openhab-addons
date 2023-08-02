@@ -18,7 +18,7 @@ import java.util.TreeMap;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * {@link ApiBrandProperties} defines brand speficfic properties
+ * {@link ApiBrandProperties} defines brand specific properties
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer

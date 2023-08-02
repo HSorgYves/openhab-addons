@@ -15,14 +15,12 @@ package org.openhab.binding.connectedcar.internal.handler;
 import static org.openhab.binding.connectedcar.internal.BindingConstants.*;
 
 import java.time.ZoneId;
-import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.connectedcar.internal.api.ApiException;
 import org.openhab.binding.connectedcar.internal.api.weconnect.WeConnectServiceStatus;
 import org.openhab.binding.connectedcar.internal.provider.CarChannelTypeProvider;
 import org.openhab.binding.connectedcar.internal.provider.ChannelDefinitions;
-import org.openhab.binding.connectedcar.internal.provider.ChannelDefinitions.ChannelIdMapEntry;
 import org.openhab.binding.connectedcar.internal.util.TextResources;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
@@ -48,11 +46,6 @@ public class WeConnectVehicleHandler extends ThingBaseHandler {
         super(thing, resources, zoneId, idMapper, channelTypeProvider);
     }
 
-    @Override
-    public boolean createBrandChannels(Map<String, ChannelIdMapEntry> channels) {
-        return false;
-    }
-
     /**
      * Register all available services
      */
@@ -68,7 +61,7 @@ public class WeConnectVehicleHandler extends ThingBaseHandler {
         boolean processed = true;
         String action = "";
         String actionStatus = "";
-        boolean switchOn = (command instanceof OnOffType) && (OnOffType) command == OnOffType.ON;
+        boolean switchOn = command == OnOffType.ON;
         logger.debug("{}: Channel {} received command {}", thingId, channelId, command);
         try {
             switch (channelId) {

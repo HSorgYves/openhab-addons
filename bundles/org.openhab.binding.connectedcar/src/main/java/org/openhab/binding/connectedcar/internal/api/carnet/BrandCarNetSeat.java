@@ -32,7 +32,7 @@ import org.openhab.binding.connectedcar.internal.handler.ThingHandlerInterface;
  */
 @NonNullByDefault
 public class BrandCarNetSeat extends CarNetApi implements BrandAuthenticator {
-    private static ApiBrandProperties properties = new ApiBrandProperties();
+    private static final ApiBrandProperties properties = new ApiBrandProperties();
     static {
         properties.brand = "VW"; // CNAPI_BRAND_SEAT;
         properties.xcountry = "ES";

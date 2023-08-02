@@ -70,7 +70,7 @@ public class FordPassApi extends ApiBase implements BrandAuthenticator {
     }
 
     @Override
-    public String getHomeReguionUrl() {
+    public String getHomeRegionUrl() {
         return getApiUrl();
     }
 
@@ -132,7 +132,7 @@ public class FordPassApi extends ApiBase implements BrandAuthenticator {
         logger.debug("{}: Sending action {} ({}, {}))", thingId, action, command, start);
         HttpMethod method = start ? HttpMethod.PUT : HttpMethod.DELETE;
         String uri = "/vehicles/v2/{2}/" + service + "/" + command;
-        String json = http.request(method, uri, "", createApiParameters(), "", "", "", false).response;
+        String json = http.request(method, uri, "", createApiParameters(), "", "").response;
         FPActionRequest req = new FPActionRequest(service, action, fromJson(gson, json, FPActionResponse.class));
         req.checkUrl = uri + "/" + req.requestId;
         return queuePendingAction(new ApiActionRequest(req));

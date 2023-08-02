@@ -48,8 +48,8 @@ public class CarNetServiceCarFinder extends ApiBaseService {
 
     @Override
     public boolean createChannels(Map<String, ChannelIdMapEntry> ch) throws ApiException {
-        addChannels(ch, CHANNEL_GROUP_LOCATION, true, CHANNEL_LOCATTION_GEO, CHANNEL_LOCATTION_TIME,
-                CHANNEL_LOCATTION_ADDRESS, CHANNEL_PARK_LOCATION, CHANNEL_PARK_ADDRESS, CHANNEL_PARK_TIME,
+        addChannels(ch, CHANNEL_GROUP_LOCATION, true, CHANNEL_LOCATION_GEO, CHANNEL_LOCATION_TIME,
+                CHANNEL_LOCATION_ADDRESS, CHANNEL_PARK_LOCATION, CHANNEL_PARK_ADDRESS, CHANNEL_PARK_TIME,
                 CHANNEL_CAR_MOVING);
         return true;
     }
@@ -61,21 +61,21 @@ public class CarNetServiceCarFinder extends ApiBaseService {
             logger.debug("{}: Get Vehicle Position", thingId);
             GeoPosition position = api.getVehiclePosition();
             logger.trace("{}: Get Vehicle Position: {}", thingId, position);
-            updated |= updateChannel(CHANNEL_LOCATTION_GEO, position.asPointType());
+            updated |= updateChannel(CHANNEL_LOCATION_GEO, position.asPointType());
 
             logger.trace("{}: Get Car Sent Time", thingId);
             String time = position.getCarSentTime();
             logger.trace("{}: Update Car Sent Time: {}", thingId, time);
-            updated |= updateChannel(CHANNEL_LOCATTION_TIME, new DateTimeType(time));
+            updated |= updateChannel(CHANNEL_LOCATION_TIME, new DateTimeType(time));
             logger.trace("{}: Update Location Address: {}", thingId, position.asPointType());
-            updated |= updateLocationAddress(position.asPointType(), CHANNEL_LOCATTION_ADDRESS);
+            updated |= updateLocationAddress(position.asPointType(), CHANNEL_LOCATION_ADDRESS);
 
             logger.debug("{}: Get Stored Position", thingId);
             position = api.getStoredPosition();
             logger.trace("{}: Update Park Location: {}", thingId, position);
             updated |= updateChannel(CHANNEL_PARK_LOCATION, position.asPointType());
             logger.trace("{}: Update Park Time: {}", thingId, time);
-            updated |= updateChannel(CHANNEL_LOCATTION_TIME, new DateTimeType(time));
+            updated |= updateChannel(CHANNEL_LOCATION_TIME, new DateTimeType(time));
             logger.trace("{}: Update Location Address: {}", thingId, position.asPointType());
             updated |= updateLocationAddress(position.asPointType(), CHANNEL_PARK_ADDRESS);
             String parkingTime = getString(position.getParkingTime());
@@ -84,8 +84,8 @@ public class CarNetServiceCarFinder extends ApiBaseService {
             updated |= updateChannel(CHANNEL_CAR_MOVING, OnOffType.OFF);
         } catch (ApiException e) {
             logger.trace("{}: ApiException: {}", thingId, e.getMessage());
-            updateChannel(CHANNEL_LOCATTION_GEO, UnDefType.UNDEF);
-            updateChannel(CHANNEL_LOCATTION_TIME, UnDefType.UNDEF);
+            updateChannel(CHANNEL_LOCATION_GEO, UnDefType.UNDEF);
+            updateChannel(CHANNEL_LOCATION_TIME, UnDefType.UNDEF);
             logger.trace("{}: Http Code {}", thingId, e.getApiResult().httpCode);
             if (e.getApiResult().httpCode == HttpStatus.NO_CONTENT_204) {
                 updated |= updateChannel(CHANNEL_CAR_MOVING, OnOffType.ON);

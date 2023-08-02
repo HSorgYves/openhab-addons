@@ -15,6 +15,7 @@ package org.openhab.binding.connectedcar.internal.api;
 import static org.openhab.binding.connectedcar.internal.api.ApiDataTypesDTO.*;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -73,7 +74,7 @@ public class ApiRequestQueue {
         }
         pendingRequests.put(req.requestId, req);
         if (eventListener != null) {
-            eventListener.onActionSent(req.service, req.action, req.requestId);
+            Objects.requireNonNull(eventListener).onActionSent(req.service, req.action, req.requestId);
         }
 
         // Check if action was accepted
@@ -85,7 +86,7 @@ public class ApiRequestQueue {
      */
     public void checkPendingRequests() {
         if (!pendingRequests.isEmpty()) {
-            logger.debug("{}: Checking status for {} pending requets", thingId, pendingRequests.size());
+            logger.debug("{}: Checking status for {} pending requests", thingId, pendingRequests.size());
             for (Map.Entry<String, ApiActionRequest> e : pendingRequests.entrySet()) {
                 ApiActionRequest request = e.getValue();
                 try {
@@ -101,7 +102,7 @@ public class ApiRequestQueue {
         }
     }
 
-    // Will be overwritten by beand implementation to support different formats
+    // Will be overwritten by brand implementation to support different formats
     public String getApiRequestStatus(ApiActionRequest req) throws ApiException {
         return API_REQUEST_SUCCESSFUL;
     }
@@ -113,7 +114,6 @@ public class ApiRequestQueue {
      * @param requestId The request id return from the API call
      * @param rstatus Raw status returned from status call
      * @return Unified request code (API_REQUEST_xxx)
-     * @throws ApiException
      */
 
     public String getRequestStatus(String requestId, String rstatus) throws ApiException {
@@ -131,7 +131,8 @@ public class ApiRequestQueue {
             status = API_REQUEST_TIMEOUT;
             remove = true;
             if (eventListener != null) {
-                eventListener.onActionTimeout(request.service, request.action, request.requestId);
+                Objects.requireNonNull(eventListener).onActionTimeout(request.service, request.action,
+                        request.requestId);
             }
         } else {
             try {
@@ -177,8 +178,8 @@ public class ApiRequestQueue {
                 }
 
                 if (eventListener != null) {
-                    eventListener.onActionResult(request.service, request.action, request.requestId,
-                            actionStatus.toUpperCase(), status);
+                    Objects.requireNonNull(eventListener).onActionResult(request.service, request.action,
+                            request.requestId, actionStatus.toUpperCase(), status);
                 }
             } catch (ApiException e) {
                 logger.debug("{}: Unable to validate request {}, {}", thingId, requestId, e.toString());
@@ -188,7 +189,7 @@ public class ApiRequestQueue {
         }
 
         if (remove) {
-            logger.debug("{}: Remove request {} for action {}.{} from queue, status is {}", thingId, request.requestId,
+            logger.debug("{}: Remove request {} for action {}.{} from queue, status is {}", thingId, request.requestId,
                     request.service, request.action, status);
             pendingRequests.remove(request.requestId);
         }

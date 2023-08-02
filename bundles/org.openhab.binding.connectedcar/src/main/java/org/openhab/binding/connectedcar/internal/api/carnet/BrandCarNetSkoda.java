@@ -24,8 +24,8 @@ import org.openhab.binding.connectedcar.internal.api.IdentityManager;
 import org.openhab.binding.connectedcar.internal.handler.ThingHandlerInterface;
 
 /**
- * {@link BrandCarNetSkoda} provides the Skoda specific functions of the API, portal URL us
- * https://www.skoda-connect.com
+ * {@link BrandCarNetSkoda} provides the Škoda specific functions of the API, portal URL us
+ * <a href="https://www.skoda-connect.com">https://www.skoda-connect.com</a>
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -33,11 +33,10 @@ import org.openhab.binding.connectedcar.internal.handler.ThingHandlerInterface;
  */
 @NonNullByDefault
 public class BrandCarNetSkoda extends CarNetApi implements BrandAuthenticator {
-    private static ApiBrandProperties properties = new ApiBrandProperties();
+    private static final ApiBrandProperties properties = new ApiBrandProperties();
     static {
-        properties.brand = "VW"; // it's "VW", not "Skoda"
+        properties.brand = "VW"; // it's "VW", not "Škoda"
         properties.xcountry = "CZ";
-        properties.apiDefaultUrl = CNAPI_DEFAULT_API_URL;
         properties.clientId = "f9a2359a-b776-46d9-bd0c-db1904343117@apps_vw-dilab_com";
         properties.xClientId = "afb0473b-6d82-42b8-bfea-cead338c46ef";
         properties.authScope = "openid mbb profile";

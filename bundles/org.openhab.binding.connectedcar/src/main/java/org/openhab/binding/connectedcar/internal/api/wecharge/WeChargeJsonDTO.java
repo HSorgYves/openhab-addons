@@ -37,7 +37,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class WeChargeJsonDTO {
 
-    public class WCLocationAddress {
+    public static class WCLocationAddress {
         public String street, zip, city, country;
 
         @Override
@@ -46,11 +46,11 @@ public class WeChargeJsonDTO {
         }
     }
 
-    public class WCLocationList {
-        public class WeChargeLocationList {
-            public class WCLocationsResult {
-                public class WCLocationsEntry {
-                    public class WCListStation {
+    public static class WCLocationList {
+        public static class WeChargeLocationList {
+            public static class WCLocationsResult {
+                public static class WCLocationsEntry {
+                    public static class WCListStation {
                         public String id;
                     }
 
@@ -70,8 +70,8 @@ public class WeChargeJsonDTO {
         public WeChargeLocationList data;
     }
 
-    public class WCStationLocation {
-        public class WCStatuionGeo {
+    public static class WCStationLocation {
+        public static class WCStationGeo {
             public String longitude;
             public String latitude;
         }
@@ -79,12 +79,12 @@ public class WeChargeJsonDTO {
         public String id;
         public WCLocationAddress address;
         @SerializedName("geo_location")
-        public WCStatuionGeo geoLocation;
+        public WCStationGeo geoLocation;
         public String description;
     }
 
-    public class WeChargeStationDetails {
-        public class WCStationConnector {
+    public static class WeChargeStationDetails {
+        public static class WCStationConnector {
             public String id, availability;
         }
 
@@ -105,16 +105,16 @@ public class WeChargeJsonDTO {
         @SerializedName("total_count")
         public Integer totalCount = 0;
         @SerializedName("total_energy_wh")
-        public Integer totalEngergyWh = 0;
+        public Integer totalEnergyWh = 0;
     }
 
-    public class WCStationDetails {
+    public static class WCStationDetails {
         public String timestamp;
         public WeChargeStationDetails result;
     }
 
-    public class WCStationList {
-        public class WeChargeStationList {
+    public static class WCStationList {
+        public static class WeChargeStationList {
             @SerializedName("total_count")
             public Integer totalCount;
             public Integer offset;
@@ -126,8 +126,8 @@ public class WeChargeJsonDTO {
         public WeChargeStationList result;
     }
 
-    public class WCSubscriptionsResponse {
-        public class WeChargeSubscription {
+    public static class WCSubscriptionsResponse {
+        public static class WeChargeSubscription {
             public String id;
             @SerializedName("created_at")
             public String createdAt;
@@ -159,9 +159,9 @@ public class WeChargeJsonDTO {
         public ArrayList<WeChargeSubscription> result;
     }
 
-    public class WCTariffResponse {
-        public class WeChargeTariff {
-            public class WCChargingCondition {
+    public static class WCTariffResponse {
+        public static class WeChargeTariff {
+            public static class WCChargingCondition {
                 @SerializedName("country_code")
                 public String countryCode;
                 public String currency;
@@ -200,8 +200,8 @@ public class WeChargeJsonDTO {
         public WeChargeTariff result;
     }
 
-    public class WCHomeSessionsResponse {
-        public class WeChargeHomeSession {
+    public static class WCHomeSessionsResponse {
+        public static class WeChargeHomeSession {
 
         }
 
@@ -210,8 +210,8 @@ public class WeChargeJsonDTO {
         public ArrayList<WeChargeHomeSession> chargingSessions;
     }
 
-    public class WCRfidCardsResponse {
-        public class WeChargeRfidCard {
+    public static class WCRfidCardsResponse {
+        public static class WeChargeRfidCard {
             public String id, number;
             @SerializedName("brand_id")
             public Integer brandId;
@@ -281,8 +281,8 @@ public class WeChargeJsonDTO {
         public ArrayList<WeChargePayRecord> result;
     }
 
-    public class WCChargeHomeRecordResponse {
-        public class WeChargeHomeRecord {
+    public static class WCChargeHomeRecordResponse {
+        public static class WeChargeHomeRecord {
             @SerializedName("authentication_method")
             public String authenticationMethod;
             @SerializedName("authorization_mode")
@@ -310,7 +310,7 @@ public class WeChargeJsonDTO {
             @SerializedName("stop_date_time")
             public String stopDateTime;
             @SerializedName("total_energy_wh")
-            public Double totalEngergyWh;
+            public Double totalEnergyWh;
             @SerializedName("transaction_id")
             public String transactionId;
             @SerializedName("station_model")
@@ -345,7 +345,7 @@ public class WeChargeJsonDTO {
             updatedAt = getString(r.createdAt);
             rfidCard = getString(r.rfidCardLabel) + " (" + getString(r.rfidCardSerialNumber) + ")";
             sessionFaulted = r.sessionFaulted;
-            totalEnergy = r.totalEngergyWh;
+            totalEnergy = r.totalEnergyWh;
             startDateTime = getString(r.startDateTime);
             endDateTime = getString(r.stopDateTime);
             Date start = convertDateTime(startDateTime);
@@ -400,9 +400,9 @@ public class WeChargeJsonDTO {
         public WeChargeStationDetails station;
         public WCChargingHistory chargingHistory;
         public Map<String, WeChargeSubscription> subscriptions = new HashMap<>();
-        public Map<String, WeChargeTariff> tariffs = new HashMap<>();;
-        public Map<String, WeChargeRfidCard> rfidCards = new HashMap<>();;
-        public Map<String, WeChargeRecord> chargingRecords = new HashMap<>();;
+        public Map<String, WeChargeTariff> tariffs = new HashMap<>();
+        public Map<String, WeChargeRfidCard> rfidCards = new HashMap<>();
+        public Map<String, WeChargeRecord> chargingRecords = new HashMap<>();
 
         public WeChargeStatus() {
         }

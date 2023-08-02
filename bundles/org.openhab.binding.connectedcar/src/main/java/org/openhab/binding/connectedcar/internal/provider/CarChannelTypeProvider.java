@@ -14,19 +14,15 @@ package org.openhab.binding.connectedcar.internal.provider;
 
 import static org.openhab.binding.connectedcar.internal.BindingConstants.BINDING_ID;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.connectedcar.internal.provider.ChannelDefinitions.ChannelIdMapEntry;
 import org.openhab.binding.connectedcar.internal.util.TextResources;
-import org.openhab.core.thing.type.ChannelDefinition;
-import org.openhab.core.thing.type.ChannelDefinitionBuilder;
 import org.openhab.core.thing.type.ChannelGroupType;
 import org.openhab.core.thing.type.ChannelGroupTypeBuilder;
 import org.openhab.core.thing.type.ChannelGroupTypeProvider;
@@ -53,7 +49,7 @@ public class CarChannelTypeProvider implements ChannelTypeProvider, ChannelGroup
     private final ChannelDefinitions channelIdMapper;
     private final TextResources resources;
 
-    private static List<ChannelType> channelTypes = new CopyOnWriteArrayList<ChannelType>(); // cache accross all things
+    private static List<ChannelType> channelTypes = new CopyOnWriteArrayList<ChannelType>(); // cache across all things
     private static List<ChannelGroupType> channelGroupTypes = new CopyOnWriteArrayList<ChannelGroupType>();
 
     @Activate
@@ -87,19 +83,19 @@ public class CarChannelTypeProvider implements ChannelTypeProvider, ChannelGroup
         }
 
         // Generate channel definition for all channels belonging to the requested group
-        List<ChannelDefinition> channelDefinitions = new ArrayList<>();
-        for (Map.Entry<String, ChannelIdMapEntry> e : channelIdMapper.getDefinitions().entrySet()) {
-            ChannelIdMapEntry channelDef = e.getValue();
-            if (!channelDef.channelName.isEmpty() && channelDef.groupName.equalsIgnoreCase(group)) {
-                ChannelTypeUID uid = new ChannelTypeUID(BINDING_ID, channelDef.channelName);
-                ChannelDefinition cd = new ChannelDefinitionBuilder(channelDef.channelName, uid)
-                        .withLabel(channelDef.getLabel()).withDescription(channelDef.getDescription()).build();
-                channelDefinitions.add(cd);
-            }
-        }
+        // List<ChannelDefinition> channelDefinitions = new ArrayList<>();
+        // for (Map.Entry<String, ChannelIdMapEntry> e : channelIdMapper.getDefinitions().entrySet()) {
+        // ChannelIdMapEntry channelDef = e.getValue();
+        // if (!channelDef.channelName.isEmpty() && channelDef.groupName.equalsIgnoreCase(group)) {
+        // ChannelTypeUID uid = new ChannelTypeUID(BINDING_ID, channelDef.channelName);
+        // ChannelDefinition cd = new ChannelDefinitionBuilder(channelDef.channelName, uid)
+        // .withLabel(channelDef.getLabel()).withDescription(channelDef.getDescription()).build();
+        // channelDefinitions.add(cd);
+        // }
+        // }
 
         // groupType = ChannelGroupTypeBuilder.instance(channelGroupTypeUID, label)
-        // .withDescription(ChannelDefnitions.getGroupAttribute(resources, group, "description"))
+        // .withDescription(ChannelDefinitions.getGroupAttribute(resources, group, "description"))
         // .withChannelDefinitions(channelDefinitions).build();
         groupType = ChannelGroupTypeBuilder.instance(channelGroupTypeUID, label)
                 .withDescription(ChannelDefinitions.getGroupAttribute(resources, group, "description")).build();

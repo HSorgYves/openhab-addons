@@ -48,7 +48,6 @@ public class BrandWeConnectVW extends WeConnectApi implements BrandAuthenticator
     static ApiBrandProperties properties = new ApiBrandProperties();
     static {
         properties.brand = API_BRAND_VWID;
-        properties.apiDefaultUrl = "https://emea.bff.cariad.digital/vehicle/v1";
         properties.userAgent = "WeConnect/5 CFNetwork/1206 Darwin/20.1.0";
         properties.xcountry = "DE";
         properties.apiDefaultUrl = WCAPI_BASE_URL;
@@ -67,7 +66,7 @@ public class BrandWeConnectVW extends WeConnectApi implements BrandAuthenticator
 
         properties.stdHeaders.put("x-newrelic-id", "VgAEWV9QDRAEXFlRAAYPUA==");
         properties.stdHeaders.put(HttpHeader.USER_AGENT.toString(), properties.userAgent);
-        properties.stdHeaders.put(HttpHeaders.ACCEPT.toString(), "*/*");
+        properties.stdHeaders.put(HttpHeaders.ACCEPT, "*/*");
         properties.stdHeaders.put(HttpHeader.ACCEPT_LANGUAGE.toString(), "de-de");
     }
 

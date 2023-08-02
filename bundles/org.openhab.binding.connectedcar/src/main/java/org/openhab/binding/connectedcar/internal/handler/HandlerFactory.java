@@ -102,7 +102,7 @@ public class HandlerFactory extends BaseThingHandlerFactory {
             } else if (THING_TYPE_WCWALLBOX.equals(thingTypeUID)) {
                 return new WeChargeThingHandler(thing, resources, zoneId, channelIdMapper, channelTypeProvider);
             } else {
-                logger.warn("HandlerFactory: Unsuppoerted ThingType requested: {}", thingTypeUID);
+                logger.warn("HandlerFactory: Unsupported ThingType requested: {}", thingTypeUID);
             }
         } catch (ApiException e) {
             logger.warn("Unable to create thing of type {}", thingTypeUID);
@@ -119,11 +119,10 @@ public class HandlerFactory extends BaseThingHandlerFactory {
     }
 
     private synchronized void registerDeviceDiscoveryService(AccountHandler bridgeHandler) {
-        ConnectedCarDiscoveryService discoveryService = new ConnectedCarDiscoveryService(bridgeHandler,
-                bundleContext.getBundle());
+        ConnectedCarDiscoveryService discoveryService = new ConnectedCarDiscoveryService(bridgeHandler);
         discoveryService.activate();
-        this.discoveryServiceRegistrations.put(bridgeHandler.getThing().getUID(), bundleContext
-                .registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<String, Object>()));
+        this.discoveryServiceRegistrations.put(bridgeHandler.getThing().getUID(),
+                bundleContext.registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<>()));
     }
 
     private synchronized void unregisterDeviceDiscoveryService(AccountHandler bridgeHandler) {

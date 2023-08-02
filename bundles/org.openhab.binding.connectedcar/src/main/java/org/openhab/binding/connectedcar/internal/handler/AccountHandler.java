@@ -61,7 +61,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link AccountHandler} implements access to the myAudi account API. It is implemented as a brdige device
+ * {@link AccountHandler} implements access to the myAudi account API. It is implemented as a bridge device
  * and also dispatches events to the vehicle things.
  *
  * @author Markus Michels - Initial contribution
@@ -83,7 +83,7 @@ public class AccountHandler extends BaseBridgeHandler implements ThingHandlerInt
     }
 
     private ApiBase api = new BrandNull();
-    private List<VehicleDetails> vehicleList = new CopyOnWriteArrayList<>();
+    // private List<VehicleDetails> vehicleList = new CopyOnWriteArrayList<>();
     private List<AccountListener> vehicleInformationListeners = new CopyOnWriteArrayList<>();
     private @Nullable ScheduledFuture<?> refreshJob;
 
@@ -95,7 +95,7 @@ public class AccountHandler extends BaseBridgeHandler implements ThingHandlerInt
         sslWeakCipher.setExcludeCipherSuites(excludedCiphersWithoutTlsRsaExclusion);
     }
 
-    private static Map<String, String> BRAND_MAP = new HashMap<>();
+    private static final Map<String, String> BRAND_MAP = new HashMap<>();
     static {
         BRAND_MAP.put(THING_MYAUDI, API_BRAND_AUDI);
         BRAND_MAP.put(THING_VOLKSWAGEN, API_BRAND_VW);
@@ -183,12 +183,9 @@ public class AccountHandler extends BaseBridgeHandler implements ThingHandlerInt
     }
 
     /**
-     * Retries the vehicle list from the the account and post this information to the listeners. New things are created
+     * Retries the vehicle list from the account and post this information to the listeners. New things are created
      * per vehicle under this account.
      * A background job is scheduled to check token status and trigger a refresh before they expire.
-     *
-     * @return
-     * @throws ApiException
      */
     public boolean initializeThing(String caller) throws ApiException {
         logger.debug("{}: Initialize Thing (caller: {}()", thingId, caller);
@@ -198,7 +195,7 @@ public class AccountHandler extends BaseBridgeHandler implements ThingHandlerInt
             api.setConfig(config);
         }
 
-        vehicleList = new ArrayList<VehicleDetails>();
+        List<VehicleDetails> vehicleList = new ArrayList<VehicleDetails>();
         for (String vin : api.getVehicles()) {
             CombinedConfig vconfig = new CombinedConfig(config);
             vconfig.vehicle.vin = vin;
@@ -209,7 +206,7 @@ public class AccountHandler extends BaseBridgeHandler implements ThingHandlerInt
         }
         informVehicleInformationListeners(vehicleList);
 
-        setupRefreshJob(5);
+        setupRefreshJob();
         stateChanged(ThingStatus.ONLINE, ThingStatusDetail.NONE, "");
         return true;
     }
@@ -274,7 +271,7 @@ public class AccountHandler extends BaseBridgeHandler implements ThingHandlerInt
     }
 
     private ApiHttpClient createHttpClient(@Nullable ApiEventListener apiListener) {
-        // Each instance has it's own http client. Audi requires weaked SSL attributes, other may not
+        // Each instance has its own http client. Audi requires to be weakened SSL attributes, other may not
         HttpClient httpClient = new HttpClient();
         try {
             httpClient = new HttpClient(config.api.weakSsl ? sslWeakCipher : sslStrongCipher);
@@ -310,8 +307,6 @@ public class AccountHandler extends BaseBridgeHandler implements ThingHandlerInt
 
     /**
      * Forward discovery information to all listeners (Vehicle Handlers)
-     *
-     * @param vehicleInformationList
      */
     private void informVehicleInformationListeners(@Nullable List<VehicleDetails> vehicleInformationList) {
         this.vehicleInformationListeners.forEach(discovery -> discovery.informationUpdate(vehicleInformationList));
@@ -331,18 +326,15 @@ public class AccountHandler extends BaseBridgeHandler implements ThingHandlerInt
 
     /**
      * Sets up a polling job (using the scheduler) with the given interval.
-     *
-     * @param initialWaitTime The delay before the first refresh. Maybe 0 to immediately
-     *            initiate a refresh.
      */
-    private void setupRefreshJob(int initialWaitTime) {
+    private void setupRefreshJob() {
         cancelRefreshJob();
-        refreshJob = scheduler.scheduleWithFixedDelay(this::refreshStatus, initialWaitTime,
-                API_TOKEN_REFRESH_INTERVAL_SEC, TimeUnit.SECONDS);
+        refreshJob = scheduler.scheduleWithFixedDelay(this::refreshStatus, 5, API_TOKEN_REFRESH_INTERVAL_SEC,
+                TimeUnit.SECONDS);
     }
 
     /**
-     * Cancels the polling job (if one was setup).
+     * Cancels the polling job (if one was set up).
      */
     private void cancelRefreshJob() {
         ScheduledFuture<?> job = refreshJob;

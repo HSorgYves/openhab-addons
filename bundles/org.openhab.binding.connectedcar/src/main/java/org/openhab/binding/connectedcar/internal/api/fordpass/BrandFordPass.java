@@ -30,7 +30,7 @@ import org.openhab.binding.connectedcar.internal.api.IdentityOAuthFlow;
 import org.openhab.binding.connectedcar.internal.handler.ThingHandlerInterface;
 
 /**
- * {@link BrandApiFord} provides the brand specific functions of the API
+ * {@link BrandFordPass} provides the brand specific functions of the API
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -67,7 +67,7 @@ public class BrandFordPass extends FordPassApi implements BrandAuthenticator {
     }
 
     @Override
-    public String getLoginUrl(IdentityOAuthFlow oauth) {
+    public String getLoginUrl(IdentityOAuthFlow oauth) throws ApiException {
         return properties.loginUrl;
     }
 

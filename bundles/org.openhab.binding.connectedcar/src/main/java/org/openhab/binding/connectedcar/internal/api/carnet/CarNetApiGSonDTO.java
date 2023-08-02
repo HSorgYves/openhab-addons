@@ -156,13 +156,13 @@ public class CarNetApiGSonDTO {
          * "The Security PIN is invalid.", "details": { "challenge": "", "user": "dYeJ7CoMzqV0obHyRZJSyzkb9d11",
          * "reason": "SECURITY_PIN_INVALID", "delay": "0" } }}
          */
-        public class CNErrorMessage2 {
+        public static class CNErrorMessage2 {
             public String error = "";
             @SerializedName("errorCode")
             public String code = "";
             @SerializedName("description")
             public String description = "";
-            public CNErrorMessage2Details details = new CNErrorMessage2Details();;
+            public CNErrorMessage2Details details = new CNErrorMessage2Details();
         }
 
         public @Nullable CNErrorMessage2 error;
@@ -175,14 +175,14 @@ public class CarNetApiGSonDTO {
         public @Nullable String delay = "";
     }
 
-    public class CarNetClientRegisterResult {
+    public static class CarNetClientRegisterResult {
         @SerializedName("client_id")
         public String clientId;
     }
 
     public static class CarNetSecurityPinAuthInfo {
         public static class CNSecurityPinAuthInfo {
-            public class CNSecurityPinTransmission {
+            public static class CNSecurityPinTransmission {
                 public Integer hashProcedureVersion;
                 public String challenge;
             }
@@ -210,8 +210,8 @@ public class CarNetApiGSonDTO {
     }
 
     public static class CarNetSecurityPinAuthentication {
-        public static class CNSecuritxPinAuth {
-            public class CNSecurityPin {
+        public static class CNSecurityPinAuth {
+            public static class CNSecurityPin {
                 public String challenge;
                 public String securityPinHash;
             }
@@ -220,7 +220,7 @@ public class CarNetApiGSonDTO {
             public String securityToken = "";
         }
 
-        public CNSecuritxPinAuth securityPinAuthentication = new CNSecuritxPinAuth();
+        public CNSecurityPinAuth securityPinAuthentication = new CNSecurityPinAuth();
     }
 
     public static class CNContentString {
@@ -265,8 +265,8 @@ public class CarNetApiGSonDTO {
     }
 
     public static class CarNetHomeRegion {
-        public class CNHomeRegion {
-            public class CNBaseUri {
+        public static class CNHomeRegion {
+            public static class CNBaseUri {
                 public String systemId;
                 public String content;
             }
@@ -286,7 +286,7 @@ public class CarNetApiGSonDTO {
             public String vin;
 
             public boolean isPairingCompleted() {
-                return pairingStatus != null && "PAIRINGCOMPLETE".equalsIgnoreCase(pairingStatus);
+                return "PAIRINGCOMPLETE".equalsIgnoreCase(pairingStatus);
             }
         }
 
@@ -301,7 +301,7 @@ public class CarNetApiGSonDTO {
          * "securityLevel":"HG_2b"
          * }
          */
-        public class CarNetUserRoleRights {
+        public static class CarNetUserRoleRights {
             public String content;
             public String status;
             public String securityLevel;
@@ -311,11 +311,11 @@ public class CarNetApiGSonDTO {
     }
 
     public static class CNVehicleData {
-        public class CarNetVehicleData {
-            public class CNVehicleDeviceList {
-                public class CNVecileDevice {
-                    public class CNEmbeddedSIM {
-                        public class CNSimIdentification {
+        public static class CarNetVehicleData {
+            public static class CNVehicleDeviceList {
+                public static class CNVehicleDevice {
+                    public static class CNEmbeddedSIM {
+                        public static class CNSimIdentification {
                             public String type;
                             public String content;
                         }
@@ -331,7 +331,7 @@ public class CarNetApiGSonDTO {
                     public String mno;
                 }
 
-                public ArrayList<CNVecileDevice> vehicleDevice;
+                public ArrayList<CNVehicleDevice> vehicleDevice;
             }
 
             public String systemId;
@@ -376,7 +376,7 @@ public class CarNetApiGSonDTO {
                 public String transmission;
             }
 
-            public CNVehicleData.CarNetVehicleData.CNVehicleDeviceList.CNVecileDevice vehicleDevices;
+            public CNVehicleData.CarNetVehicleData.CNVehicleDeviceList.CNVehicleDevice vehicleDevices;
             public CNCarPortData carportData;
         }
 
@@ -473,13 +473,13 @@ public class CarNetApiGSonDTO {
 
     public static class CarNetActionResponse {
         public static class CNActionResponse {
-            public class CNRluActionResponse {
+            public static class CNRluActionResponse {
                 public String requestId;
                 public String vin;
             }
 
-            public class CNRclimaActionResponse {
-                public class CNRclimaSettings {
+            public static class CNRclimaActionResponse {
+                public static class CNRclimaSettings {
                     public boolean climatisationWithoutHVpower;
                     public String heaterSource;
                 }
@@ -490,12 +490,12 @@ public class CarNetApiGSonDTO {
                 CNRclimaSettings settings;
             }
 
-            public class CNRheatActionResponse {
+            public static class CNRheatActionResponse {
                 public String requestId;
                 public String vin;
             }
 
-            public class CarNetCurrentVehicleData {
+            public static class CarNetCurrentVehicleData {
                 public String requestId;
                 public String vin;
             }
@@ -536,11 +536,11 @@ public class CarNetApiGSonDTO {
     }
 
     public static class CNEluActionHistory {
-        public class CarNetRluHistory {
-            public class CarNetRluLockActionList {
-                public class CarNetRluLockAction {
-                    public class CNRluLockStatus {
-                        public class CNRluLockEntry {
+        public static class CarNetRluHistory {
+            public static class CarNetRluLockActionList {
+                public static class CarNetRluLockAction {
+                    public static class CNRluLockStatus {
+                        public static class CNRluLockEntry {
                             public Boolean valid;
                             public Boolean locked;
                             public Boolean open;
@@ -576,7 +576,7 @@ public class CarNetApiGSonDTO {
     }
 
     public static class CNOperationList {
-        public class CarNetOperationList {
+        public static class CarNetOperationList {
             public String vin;
             public String channelClient;
             public String userId;
@@ -584,12 +584,12 @@ public class CarNetApiGSonDTO {
             public String securityLevel;
             public String status;
 
-            public class CarNetServiceInfo {
-                public class CNServiceStatus {
+            public static class CarNetServiceInfo {
+                public static class CNServiceStatus {
                     public String status;
                 }
 
-                public class CNServiceOperation {
+                public static class CNServiceOperation {
                     public String id;
                     public String version;
                     public String permission;
@@ -597,11 +597,11 @@ public class CarNetApiGSonDTO {
                     public String requiredSecurityLevel;
                 }
 
-                public class CNServiceUrl {
+                public static class CNServiceUrl {
                     public String content;
                 }
 
-                public class CNComulativeLicense {
+                public static class CNCumulativeLicense {
                     public String status;
                 }
 
@@ -609,7 +609,7 @@ public class CarNetApiGSonDTO {
                 public String serviceType;
                 public CNServiceStatus serviceStatus;
                 public Boolean licenseRequired;
-                public CNComulativeLicense cumulatedLicense;
+                public CNCumulativeLicense cumulatedLicense;
                 public Boolean primaryUserRequired;
                 public String serviceEol;
                 public Boolean rolesAndRightsRequired;
@@ -634,8 +634,8 @@ public class CarNetApiGSonDTO {
     }
 
     public static class CNDestinations {
-        public class CarNetDestination {
-            public class CNDestinationAddress {
+        public static class CarNetDestination {
+            public static class CNDestinationAddress {
                 public String addressType;
                 public String city;
                 public String country;
@@ -643,11 +643,11 @@ public class CarNetApiGSonDTO {
                 public String zipCode;
             }
 
-            public class CNDestinationGeo {
+            public static class CNDestinationGeo {
                 public Double latitude;
                 public Double longitude;
 
-                public double getLattitude() {
+                public double getLatitude() {
                     // return (latitude != null) ? latitude / 1000000.0 : 0;
                     return (latitude != null) ? latitude : 0;
                 }
@@ -658,7 +658,7 @@ public class CarNetApiGSonDTO {
                 }
             }
 
-            public class CNDestinationPOI {
+            public static class CNDestinationPOI {
                 public String lastName;
                 // "phoneData":[{"phoneType":"2"} ]}
             }
@@ -681,8 +681,8 @@ public class CarNetApiGSonDTO {
     }
 
     public static class CarNetTripData {
-        public class CarNetTripDataList {
-            public class CarNetTripDataEntry {
+        public static class CarNetTripDataList {
+            public static class CarNetTripDataEntry {
                 public String tripType;
                 public String tripID;
                 public Integer averageElectricEngineConsumption;
@@ -703,20 +703,20 @@ public class CarNetApiGSonDTO {
     }
 
     public static class CNChargerInfo {
-        public class CarNetChargerStatus {
-            public class CNChargerSettings {
-                public class CNCargerModeSel {
+        public static class CarNetChargerStatus {
+            public static class CNChargerSettings {
+                public static class CNChargerModeSelection {
                     public CNContentString modificationState;
                     public CNContentString modificationReason;
                     public CNContentString value;
                 }
 
                 public CNContentInt maxChargeCurrent;
-                public CNCargerModeSel chargeModeSelection;
+                public CNChargerModeSelection chargeModeSelection;
             }
 
-            public class CNChargerStatus {
-                public class CarNetChargerStatusData {
+            public static class CNChargerStatus {
+                public static class CarNetChargerStatusData {
                     public CNContentString chargingMode;
                     public CNContentInt chargingStateErrorCode;
                     public CNContentString chargingReason;
@@ -725,7 +725,7 @@ public class CarNetApiGSonDTO {
                     public CNContentString chargingState;
                 }
 
-                public class CNChargerRangeStatusData {
+                public static class CNChargerRangeStatusData {
                     public CNContentString engineTypeFirstEngine;
                     public CNContentInt primaryEngineRange;
                     public CNContentInt hybridRange;
@@ -733,18 +733,18 @@ public class CarNetApiGSonDTO {
                     public CNContentInt secondaryEngineRange;
                 }
 
-                public class CNChargerLedStatusData {
+                public static class CNChargerLedStatusData {
                     public CNContentString ledColor;
                     public CNContentString ledState;
                 }
 
-                public class CNBatteryStatusData {
+                public static class CNBatteryStatusData {
                     public CNContentInt stateOfCharge;
                     public CNContentInt remainingChargingTime;
                     public CNContentString remainingChargingTimeTargetSOC;
                 }
 
-                public class CNPlugStatusData {
+                public static class CNPlugStatusData {
                     public CNContentString plugState;
                     public CNContentString lockState;
                 }
@@ -764,9 +764,9 @@ public class CarNetApiGSonDTO {
     }
 
     public static class CarNetClimaterTimer {
-        public class CNTimerProfileList {
-            public class CNTimerProfile {
-                public class CNTimerProfileEntry {
+        public static class CNTimerProfileList {
+            public static class CNTimerProfile {
+                public static class CNTimerProfileEntry {
                     public String timestamp;
                     public String profileName;
                     public String profileID;
@@ -786,9 +786,9 @@ public class CarNetApiGSonDTO {
             CNTimerProfile timerProfileList;
         }
 
-        public class CNTimerList {
-            public class CNTimerEntryList {
-                public class CNTimerEntry {
+        public static class CNTimerList {
+            public static class CNTimerEntryList {
+                public static class CNTimerEntry {
                     public String timestamp;
                     public String timerID;
                     public String timerProgrammedStatus;
@@ -802,8 +802,8 @@ public class CarNetApiGSonDTO {
             CNTimerEntryList timerList;
         }
 
-        public class CNStatusTimerList {
-            public class CNStatusTimerEntry {
+        public static class CNStatusTimerList {
+            public static class CNStatusTimerEntry {
                 CNContentString timerChargeScheduleStatus;
                 CNContentString timerClimateScheduleStatus;
                 CNContentString timerExpiredStatus;
@@ -813,11 +813,11 @@ public class CarNetApiGSonDTO {
             public ArrayList<CNStatusTimerEntry> timer;
         }
 
-        public class CNTimerAndProfileList {
-            public class CNZoneSettings {
-                public class CNZoneSettingList {
-                    public class CNZoneSettingEntry {
-                        public class CNZoneValue {
+        public static class CNTimerAndProfileList {
+            public static class CNZoneSettings {
+                public static class CNZoneSettingList {
+                    public static class CNZoneSettingEntry {
+                        public static class CNZoneValue {
                             Boolean isEnabled;
                             String position;
                         }
@@ -832,20 +832,20 @@ public class CarNetApiGSonDTO {
                 CNZoneSettingList zoneSettings;
             }
 
-            public class CNClimateElementSettings {
+            public static class CNClimateElementSettings {
                 CNContentBool isClimatisationAtUnlock;
                 CNContentBool isMirrorHeatingEnabled;
                 CNZoneSettings zoneSettings;
             }
 
-            public class CNBasicTimerSettings {
+            public static class CNBasicTimerSettings {
                 public String timestamp;
                 public String heaterSource;
                 public String chargeMinLimit;
                 CNClimateElementSettings climaterElementSettings;
             }
 
-            public class CNStatusTimer {
+            public static class CNStatusTimer {
                 public String timerID;
             }
 
@@ -857,12 +857,12 @@ public class CarNetApiGSonDTO {
     }
 
     public static class CNClimater {
-        public class CarNetClimaterStatus {
-            public class CNClimaterSettings {
-                public class CNClimaterElementSettings {
-                    public class CNClimaterZoneSettingsList {
-                        public class CNClimaterZoneSetting {
-                            public class CNClZoneSetValue {
+        public static class CarNetClimaterStatus {
+            public static class CNClimaterSettings {
+                public static class CNClimaterElementSettings {
+                    public static class CNClimaterZoneSettingsList {
+                        public static class CNClimaterZoneSetting {
+                            public static class CNClZoneSetValue {
                                 public Boolean isEnabled;
                                 public String position;
                             }
@@ -884,10 +884,10 @@ public class CarNetApiGSonDTO {
                 public CNContentString heaterSource;
             }
 
-            public class CNClimaterStatus {
-                public class CarNetClimaterStatusData {
-                    public class CarNetClimaterZoneState {
-                        public class CNClimaterZonState {
+            public static class CNClimaterStatus {
+                public static class CarNetClimaterStatusData {
+                    public static class CarNetClimaterZoneState {
+                        public static class CNClimaterZonState {
                             public Boolean isActive;
                             public String position;
                         }
@@ -896,8 +896,8 @@ public class CarNetApiGSonDTO {
                         public CNClimaterZonState value;
                     }
 
-                    public class CNClimaterElementState {
-                        public class CarNetClimaterZoneStateList {
+                    public static class CNClimaterElementState {
+                        public static class CarNetClimaterZoneStateList {
                             public ArrayList<CarNetClimaterZoneState> zoneState;
                         }
 
@@ -916,11 +916,11 @@ public class CarNetApiGSonDTO {
                     public CNClimaterElementState climatisationElementStates;
                 }
 
-                public class CNTemperatureStatusData {
+                public static class CNTemperatureStatusData {
                     public CNContentInt outdoorTemperature;
                 }
 
-                public class CNParkingClockStatusData {
+                public static class CNParkingClockStatusData {
                     public CNContentString vehicleParkingClock;
                 }
 
@@ -971,7 +971,7 @@ public class CarNetApiGSonDTO {
 
     public static class CNSpeedAlerts {
         public static class CarNetSpeedAlerts {
-            public static class CarNetpeedAlertEntry {
+            public static class CarNetSpeedAlertEntry {
                 /*
                  * "id":"1548989",
                  * "alertType":"START_EXCEEDING",
@@ -988,14 +988,14 @@ public class CarNetApiGSonDTO {
                 public String speedLimit;
             }
 
-            public ArrayList<CarNetpeedAlertEntry> speedAlert = new ArrayList<>();
+            public ArrayList<CarNetSpeedAlertEntry> speedAlert = new ArrayList<>();
         }
 
         public CarNetSpeedAlerts speedAlerts;
     }
 
     public static class CNGeoFenceAlertConfig {
-        public class CarNetGeoFenceConfig {
+        public static class CarNetGeoFenceConfig {
             /*
              * "debouncePostTime":"10",
              * "timeoutJobProcessing":"120",
@@ -1047,8 +1047,8 @@ public class CarNetApiGSonDTO {
     }
 
     public static class CNHeaterVentilation {
-        public class CarNetHeaterVentilationStatus {
-            public class ClimatisationStateReport {
+        public static class CarNetHeaterVentilationStatus {
+            public static class ClimatisationStateReport {
                 public String climatisationState;
                 public Integer climatisationDuration;
                 public Integer remainingClimateTime;
@@ -1061,122 +1061,10 @@ public class CarNetApiGSonDTO {
         CarNetHeaterVentilationStatus statusResponse;
     }
 
-    /*
-     * public static class CNVehicleSpec {
-     * public class CarNetVehicleSpec {
-     * public class CarNetUserVehicles {
-     * public class CNUserRole {
-     * String role;
-     * }
-     *
-     * public class CarNetVehicle {
-     * public class CNVehicleCore {
-     * public String commissionNumber;
-     * public String modelYear;
-     * public String exteriorColorId;
-     * }
-     *
-     * public class CNVehicleClassification {
-     * public String driveTrain;
-     * public String modelRange;
-     * }
-     *
-     * public class CarNetVehicleMedia {
-     * public String shortName;
-     * public String longName;
-     * public String exteriorColor;
-     * public String interiorColor;
-     * }
-     *
-     * public class CarNetVehiclePicture {
-     * public String mediaType;
-     * public String url;
-     * }
-     *
-     * public class CNVehicleHifa {
-     * public String factoryPickupDateFrom;
-     * public String factoryPickupDateTill;
-     * public String fbDestination;
-     * }
-     *
-     * public class CNVehiclePdw {
-     * Boolean pdwVehicle;
-     * }
-     *
-     * public class CarNetEquipment {
-     * public String code;
-     * public String name;
-     * public String categoryId;
-     * public String categoryName;
-     * public String subCategoryId;
-     * public String subCategoryName;
-     * public String teaserImage;
-     * public Boolean standard;
-     * }
-     *
-     * public class CarNetTechSpec {
-     * public String key;
-     * public String name;
-     * public String value;
-     * public String groupId;
-     * public String groupName;
-     * }
-     *
-     * public class CNConsumption {
-     * public class CNWltps {
-     * public class CNAttribute {
-     * public String attributeId;
-     * public String scaleUnit;
-     * public String value;
-     * }
-     *
-     * public String attributeGroup;
-     * public ArrayList<CNAttribute> attributes;
-     * }
-     *
-     * public class CNTechnicalSpecification {
-     * public String key;
-     * public String name;
-     * public String value;
-     * public String unit;
-     * public String groupId;
-     * public String groupName;
-     * }
-     *
-     * public ArrayList<CNWltps> wltps;
-     * public ArrayList<CNTechnicalSpecification> technicalSpecifications;
-     * }
-     *
-     * public CNVehicleCore core;
-     * public CNVehicleClassification classification;
-     * public CarNetVehicleMedia media;
-     * public ArrayList<CarNetVehiclePicture> renderPictures;
-     * public CNVehicleHifa hifa;
-     * public CNVehiclePdw pdw;
-     * public ArrayList<CarNetEquipment> equipments;
-     * public ArrayList<CarNetTechSpec> techSpecs;
-     * public CNConsumption consumption;
-     * }
-     *
-     * public String csid;
-     * public String vin;
-     * public Boolean owner;
-     * public String type;
-     * public String devicePlatform;
-     * public Boolean mbbConnect;
-     * public CNUserRole userRole;
-     * }
-     *
-     * public ArrayList<CarNetUserVehicles> userVehicles;
-     * }
-     *
-     * public CarNetVehicleSpec data;
-     * }
-     */
     public static class CNRequestStatus {
         // {"requestStatusResponse":{"vin":"WAUZZZF21LN046449","status":"request_not_found"}}
         // {"requestStatusResponse":{"vin":"WAUZZZF21LN046449","status":"request_fail","error":200}}
-        public class CarNetRequestStatus {
+        public static class CarNetRequestStatus {
             public String vin;
             public String status;
             public String resultData;
@@ -1184,7 +1072,7 @@ public class CarNetApiGSonDTO {
         }
 
         // {"action":{"type":"startClimatisation","actionId":26713297,"actionState":"queued"}}
-        public class CarNetActionStatus {
+        public static class CarNetActionStatus {
             public String type;
             public String actionId;
             public String actionState;

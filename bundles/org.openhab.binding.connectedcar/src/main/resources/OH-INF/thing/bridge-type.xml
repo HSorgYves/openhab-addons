@@ -32,20 +32,20 @@
 
 
 	<bridge-type id="skoda">
-		<label>Skoda Connect Account (CarNet)</label>
-		<description>This thing represents a Skoda CarNet Account.</description>
+		<label>Škoda Connect Account (CarNet)</label>
+		<description>This thing represents a Škoda CarNet Account.</description>
 		<config-description-ref uri="bridge-type:connectedcar:cnaccount"/>
 	</bridge-type>
 
 	<bridge-type id="skoda-e">
-		<label>Skoda Enyaq Account (Skoda-E)</label>
-		<description>This thing represents an account for Skoda electrical vehicles.</description>
+		<label>Škoda Enyaq Account (Škoda-E)</label>
+		<description>This thing represents an account for Škoda electrical vehicles.</description>
 		<config-description-ref uri="bridge-type:connectedcar:seaccount"/>
 	</bridge-type>
 
 	<bridge-type id="seat">
 		<label>SEAT Connect Account (CarNet)</label>
-		<description>This thing represents a Skoda CarNet Account.</description>
+		<description>This thing represents a SEAT CarNet Account.</description>
 
 		<config-description-ref uri="bridge-type:connectedcar:cnaccount"/>
 	</bridge-type>

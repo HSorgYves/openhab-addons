@@ -32,7 +32,6 @@ import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WC
 import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WeChargeRecord;
 import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WeChargeStationDetails;
 import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WeChargeStatus;
-import org.openhab.binding.connectedcar.internal.api.weconnect.WeConnectServiceStatus;
 import org.openhab.binding.connectedcar.internal.handler.ThingBaseHandler;
 import org.openhab.binding.connectedcar.internal.provider.ChannelDefinitions.ChannelIdMapEntry;
 import org.openhab.core.types.UnDefType;
@@ -40,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link WeConnectServiceStatus} implements the Status Service for WeConnect.
+ * The {@link WeChargeServiceStatus} implements the Status Service for WeConnect.
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -66,7 +65,7 @@ public class WeChargeServiceStatus extends ApiBaseService {
         }
 
         // ID.Charger Pro provides number of charging cycles and total energy
-        boolean chargerPro = (status.chargingHistory.totalCount > 0 || status.chargingHistory.totalEngergyWh > 0);
+        boolean chargerPro = (status.chargingHistory.totalCount > 0 || status.chargingHistory.totalEnergyWh > 0);
         addChannels(channels, CHANNEL_GROUP_CHARGER, true, CHANNEL_CHARGER_NAME, CHANNEL_CHARGER_ADDRESS,
                 CHANNEL_CHARGER_LAST_CONNECT, CHANNEL_CHARGER_PLUG_STATE, CHANNEL_CONTROL_RESTART);
         addChannels(channels, chargerPro, CHANNEL_CHARGER_CYCLES, CHANNEL_CHARGER_ENERGY);
@@ -146,12 +145,7 @@ public class WeChargeServiceStatus extends ApiBaseService {
 
         // Sort records, newest first
         List<WeChargeRecord> recordList = new ArrayList<>(status.chargingRecords.values());
-        Collections.sort(recordList, Collections.reverseOrder(new Comparator<WeChargeRecord>() {
-            @Override
-            public int compare(WeChargeRecord a, WeChargeRecord b) {
-                return a.createdAt.compareTo(b.createdAt);
-            }
-        }));
+        recordList.sort(Collections.reverseOrder(Comparator.comparing(a -> a.createdAt)));
 
         i = 1;
         int count = getConfig().vehicle.numChargingRecords;

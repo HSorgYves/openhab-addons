@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jetty.http.HttpHeader;
 
 /**
- * The {@link ApiHttpMap} helper classs to build header and data maps for HTTP requests
+ * The {@link ApiHttpMap} helper classes to build header and data maps for HTTP requests
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer

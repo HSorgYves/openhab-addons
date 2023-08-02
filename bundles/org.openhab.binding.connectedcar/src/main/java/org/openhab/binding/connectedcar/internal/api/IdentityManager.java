@@ -17,7 +17,6 @@ import static org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSon
 import static org.openhab.binding.connectedcar.internal.util.Helpers.*;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,7 +87,7 @@ public class IdentityManager {
             return tokens.apiToken.accessToken;
         }
 
-        logger.trace("{}: createAccessToken for {} - reauthenticating", config.getLogId(), config.api.clientId);
+        logger.trace("{}: createAccessToken for {} - re-authenticating", config.getLogId(), config.api.clientId);
         BrandAuthenticator authenticator = config.authenticator;
         if (authenticator == null) {
             throw new ApiSecurityException("No authenticator available");
@@ -97,7 +96,7 @@ public class IdentityManager {
         /*
          * Authentication is performed as follows
          * 1. OAuth based login is performed given the account credentials. This results in the so-called Id Token
-         * 2. The identity token is used to create an access token. In beetween Audi accepts tokens created by the VW
+         * 2. The identity token is used to create an access token. In between Audi accepts tokens created by the VW
          * token management.
          * 3. The process also returns a refresh token, which could be used to refresh the access token before it
          * expires. This avoids sending the credentials again and again.
@@ -139,7 +138,7 @@ public class IdentityManager {
         TokenSet tokens = getTokenSet(config.tokenSetId);
         if (!tokens.idToken.isValid() || tokens.idToken.isExpired()) {
             // Token got invalid, force recreation
-            logger.debug("{}: idToken experied, re-login", config.getLogId());
+            logger.debug("{}: idToken expired, re-login", config.getLogId());
             tokens.apiToken.invalidate();
             createAccessToken(config);
         }
@@ -153,27 +152,24 @@ public class IdentityManager {
     }
 
     /**
-     * Create security token required for priviledged functions like lock/unlock.
+     * Create security token required for privileged functions like lock/unlock.
      *
      * @param config The combined config (account+vehicle)
      * @param service Service requesting this access level
      * @param action Action to be performed
      * @return Security Token
-     * @throws ApiException
      */
     public String createSecurityToken(CombinedConfig config, String service, String action) throws ApiException {
         if (config.vehicle.pin.isEmpty()) {
-            throw new ApiSecurityException("No SPIN is confirgured, can't perform authentication");
+            throw new ApiSecurityException("No SPIN is configured, can't perform authentication");
         }
 
         // First check for a valid token
-        Iterator<ApiIdentity> it = securityTokens.iterator();
-        while (it.hasNext()) {
-            ApiIdentity stoken = it.next();
-            if (stoken.service.equals(service) && stoken.isValid()) {
-                // return stoken.securityToken;
-            }
-        }
+        // for (ApiIdentity stoken : securityTokens) {
+        // if (stoken.service.equals(service) && stoken.isValid()) {
+        // return stoken.securityToken;
+        // }
+        // }
 
         /*
          * 1. Security token is based on access token. We use the cashed token if still valid or request a new one.
@@ -222,9 +218,7 @@ public class IdentityManager {
         logger.debug("{}: securityToken granted successful!", config.getLogId());
         synchronized (securityTokens) {
             securityToken.setService(service);
-            if (securityTokens.contains(securityToken)) {
-                securityTokens.remove(securityToken);
-            }
+            securityTokens.remove(securityToken);
             securityTokens.add(securityToken);
         }
         return securityToken.securityToken;
@@ -247,14 +241,12 @@ public class IdentityManager {
 
     /**
      *
-     * Request/refreh the different tokens
+     * Request/refresh the different tokens
      * accessToken, which is required to access the API
      * idToken, which is required to request the securityToken and
      * securityToken, which is required to perform control functions
      *
      * The validity is checked and if token is not expired it will be reused.
-     *
-     * @throws ApiException
      */
     public boolean refreshTokens(CombinedConfig config) throws ApiException {
         try {
@@ -262,9 +254,7 @@ public class IdentityManager {
             refreshToken(config, tokens, tokens.apiToken);
             updateTokenSet(config.tokenSetId, tokens);
 
-            Iterator<ApiIdentity> it = securityTokens.iterator();
-            while (it.hasNext()) {
-                ApiIdentity stoken = it.next();
+            for (ApiIdentity stoken : securityTokens) {
                 if (!refreshToken(config, tokens, stoken)) {
                     // Token invalid / refresh failed -> remove
                     logger.debug("{}: Security token for service {} expired, remove", config.getLogId(),
@@ -289,7 +279,6 @@ public class IdentityManager {
      * @param config Combined account/vehicle config
      * @param token Token to refresh
      * @return new token
-     * @throws ApiException
      */
     public boolean refreshToken(CombinedConfig config, TokenSet tokenSet, ApiIdentity token) throws ApiException {
         if (!token.isValid()) {
@@ -323,8 +312,7 @@ public class IdentityManager {
                         config.api.clientId);
                 logger.trace("{}: new token={}", config.getLogId(), token.accessToken);
             } catch (ApiException e) {
-                logger.debug("{}: Unable to refresh token: {} for {}", config.getLogId(), e.toString(),
-                        config.api.clientId);
+                logger.debug("{}: Unable to refresh token: {} for {}", config.getLogId(), e, config.api.clientId);
                 // Invalidate token (triggers a new login when accessToken is required)
                 if (token.isExpired()) {
                     token.invalidate();
@@ -357,18 +345,16 @@ public class IdentityManager {
 
     TokenSet getTokenSet(String tokenSetId) {
         TokenSet ts = accountTokens.get(tokenSetId);
-        logger.trace("getTokenSet {}: HTTP ClientId: {} API Token: {}", tokenSetId, ts.http.getConfig().api.clientId,
-                ts.apiToken.accessToken);
         if (ts != null) {
+            logger.trace("getTokenSet {}: HTTP ClientId: {} API Token: {}", tokenSetId,
+                    ts.http.getConfig().api.clientId, ts.apiToken.accessToken);
             return ts;
         }
         throw new IllegalArgumentException("tokenSetId is invalid");
     }
 
     synchronized void updateTokenSet(String tokenSetId, TokenSet tokens) {
-        if (accountTokens.containsKey(tokenSetId)) {
-            accountTokens.remove(tokenSetId);
-        }
+        accountTokens.remove(tokenSetId);
         accountTokens.put(tokenSetId, tokens);
     }
 }

@@ -12,11 +12,10 @@
  */
 package org.openhab.binding.connectedcar.internal.api;
 
-import static org.openhab.binding.connectedcar.internal.api.ApiDataTypesDTO.API_STATUS_CLASS_SECURUTY;
+import static org.openhab.binding.connectedcar.internal.api.ApiDataTypesDTO.API_STATUS_CLASS_SECURITY;
 import static org.openhab.binding.connectedcar.internal.util.Helpers.getInteger;
 
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApi;
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CNApiError1;
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CNApiError2;
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CNApiError2.CNErrorMessage2;
@@ -26,7 +25,7 @@ import org.openhab.binding.connectedcar.internal.api.weconnect.WeConnectApiJsonD
 import org.openhab.binding.connectedcar.internal.api.weconnect.WeConnectApiJsonDTO.WCActionResponse.WCApiError2;
 
 /**
- * The {@link CarNetApi} implements the http based API access to CarNet
+ * The {@link ApiErrorDTO} implements the http based API access to CarNet
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -111,7 +110,7 @@ public class ApiErrorDTO {
     }
 
     public boolean isSecurityClass() {
-        return description.contains(API_STATUS_CLASS_SECURUTY);
+        return description.contains(API_STATUS_CLASS_SECURITY);
     }
 
     @Override

@@ -17,7 +17,7 @@ import static org.openhab.binding.connectedcar.internal.api.ApiDataTypesDTO.API_
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * {@link BrandNull} providesan empty implementation of the Brand interface
+ * {@link BrandNull} provides an empty implementation of the Brand interface
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer

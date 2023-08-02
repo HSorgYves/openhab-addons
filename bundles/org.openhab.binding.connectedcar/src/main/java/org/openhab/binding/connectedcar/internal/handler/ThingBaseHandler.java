@@ -79,7 +79,6 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 public abstract class ThingBaseHandler extends BaseThingHandler implements AccountListener, ApiEventListener {
 
-    @SuppressWarnings("null")
     private final Logger logger = LoggerFactory.getLogger(ThingBaseHandler.class);
 
     protected final TextResources resources;
@@ -203,7 +202,7 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
                 return false;
             }
 
-            // Some providers require a 2nd login (e. g. Skoda-E)
+            // Some providers require a 2nd login (e. g. Škoda-E)
             ApiBrandProperties prop = api.getProperties2();
             CombinedConfig pConf = config.previousConfig;
             if (prop != null && pConf == null) {
@@ -314,19 +313,14 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
         String error = "";
         logger.debug("{}: Channel {} received command {}", thingId, channelId, command);
         try {
-            switch (channelId) {
-                case CHANNEL_CONTROL_UPDATE:
-                    if (command == OnOffType.ON) {
-                        // trigger update poll, but also request vehicle to update status
-                        requestStatus = true;
-                        forceUpdate = true;
-                    }
-                    break;
-                default:
-                    if (!handleBrandCommand(channelUID, command)) {
-                        logger.info("{}: Channel {} is unknown, command {} ignored", thingId, channelId, command);
-                    }
-                    break;
+            if (channelId.equals(CHANNEL_CONTROL_UPDATE)) {
+                if (command == OnOffType.ON) {
+                    // trigger update poll, but also request vehicle to update status
+                    requestStatus = true;
+                    forceUpdate = true;
+                }
+            } else if (!handleBrandCommand(channelUID, command)) {
+                logger.info("{}: Channel {} is unknown, command {} ignored", thingId, channelId, command);
             }
         } catch (ApiException e) {
             ApiErrorDTO res = e.getApiResult().getApiError();
@@ -337,7 +331,7 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
                 logger.warn("{}: API reported 'Too many requests', slow down updates", thingId);
             } else {
                 error = getError(e);
-                logger.warn("{}: {}", thingId, error.toString());
+                logger.warn("{}: {}", thingId, error);
             }
         } catch (RuntimeException e) {
             error = "General Error: " + getString(e.getMessage());
@@ -346,7 +340,7 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
     }
 
     /**
-     * Brigde status changed
+     * Bridge status changed
      */
     @Override
     public void stateChanged(ThingStatus status, ThingStatusDetail detail, String message) {
@@ -377,9 +371,6 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
 
     /**
      * Sets up a polling job (using the scheduler) with the given interval.
-     *
-     * @param initialWaitTime The delay before the first refresh. Maybe 0 to immediately
-     *            initiate a refresh.
      */
     private void setupPollingJob() {
         cancelPollingJob();
@@ -403,7 +394,7 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
                         Bridge bridge = getBridge();
                         if ((bridge == null) || bridge.getStatus() != ThingStatus.ONLINE) {
                             if (status == ThingStatus.UNKNOWN) {
-                                // account thing not yet initialited
+                                // account thing not yet initialised
                                 forceUpdate = true;
                             } else if (status != ThingStatus.OFFLINE) {
                                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE,
@@ -466,7 +457,7 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
 
         /*
          * Iterate all enabled services and poll for updates
-         * If a single service poll fails, continue anyways
+         * If a single service poll fails, continue anyway
          * unless the access token expired and can't be renewed
          */
         boolean updated = false;
@@ -521,7 +512,7 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
     }
 
     private void cancelPollingJob() {
-        // Cancels the polling job (if one was setup).
+        // Cancels the polling job (if one was set up).
         ScheduledFuture<?> job = pollingJob;
         if (job != null) {
             job.cancel(false);
@@ -532,7 +523,6 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
      * Dynamically create missing channels from channel definition
      *
      * @param channels List of channels to create (based on available services)
-     * @return
      */
     private boolean createChannels(List<ChannelIdMapEntry> channels) {
         boolean created = false;
@@ -556,7 +546,7 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
 
                 // the channel does not exist yet, so let's add it
                 logger.debug("{}: Creating channel {}#{}, type {}, UID={}", thingId, groupId, channelId, itemType,
-                        channelTypeUID.toString());
+                        channelTypeUID);
                 channelTypeProvider.addChannelGroupType(groupId);
                 channelTypeProvider.addChannelType(channelTypeUID); // make sure ChannelType is defined
                 Channel channel = ChannelBuilder
@@ -669,7 +659,7 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
         ApiResult res = e.getApiResult();
         if (res.httpCode == HttpStatus.FORBIDDEN_403) {
             logger.info("{}: API Service is not available: ", thingId);
-            return "API Service not accessable or disabled";
+            return "API Service not accessible or disabled";
         }
 
         String reason = "";
@@ -685,7 +675,7 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
         }
         String desc = error.description;
         if (desc != null && error.isSecurityClass()) {
-            String message = getApiStatus(desc, API_STATUS_CLASS_SECURUTY);
+            String message = getApiStatusSecurityClass(desc);
             logger.debug("{}: {}({})", thingId, message, error.description);
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_PENDING, message);
         }
@@ -699,7 +689,7 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
             String msgId = API_STATUS_MSG_PREFIX + "." + error.code;
             message = resources.get(msgId);
             if (message.equals(msgId)) {
-                // No user friendly message for this code was found, so output the raw description
+                // No user-friendly message for this code was found, so output the raw description
                 message = message + " - " + error.description;
             }
         }
@@ -707,11 +697,11 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
         return message;
     }
 
-    protected String getApiStatus(String errorMessage, String errorClass) {
-        if (errorMessage.contains(errorClass)) {
+    protected String getApiStatusSecurityClass(String errorMessage) {
+        if (errorMessage.contains(API_STATUS_CLASS_SECURITY)) {
             // extract the error code like VSR.security.9007
             String key = API_STATUS_MSG_PREFIX
-                    + substringBefore(substringAfterLast(errorMessage, API_STATUS_CLASS_SECURUTY + "."), ")").trim();
+                    + substringBefore(substringAfterLast(errorMessage, API_STATUS_CLASS_SECURITY + "."), ")").trim();
             return resources.get(key);
         }
         return "";

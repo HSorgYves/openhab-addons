@@ -13,10 +13,11 @@
 package org.openhab.binding.connectedcar.internal.api;
 
 import static org.openhab.binding.connectedcar.internal.BindingConstants.*;
-import static org.openhab.binding.connectedcar.internal.api.ApiHttpClient.getUrlParm;
+import static org.openhab.binding.connectedcar.internal.api.ApiHttpClient.getUrlParam;
 import static org.openhab.binding.connectedcar.internal.util.Helpers.substringBetween;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -116,12 +117,12 @@ public class IdentityOAuthFlow extends ApiHttpMap {
     }
 
     public ApiResult get(String url) throws ApiException {
-        res = http.get(url, headers, false);
+        res = http.get(url, headers);
         return update();
     }
 
     public ApiResult post(String url, boolean json) throws ApiException {
-        if (!getHeaders().containsKey(HttpHeaders.CONTENT_TYPE.toString())) {
+        if (!getHeaders().containsKey(HttpHeaders.CONTENT_TYPE)) {
             header(HttpHeader.CONTENT_TYPE, json ? CONTENT_TYPE_JSON : CONTENT_TYPE_FORM_URLENC);
         }
         return post(url, getRequestData(json));
@@ -139,7 +140,7 @@ public class IdentityOAuthFlow extends ApiHttpMap {
 
     public ApiResult follow() throws ApiException {
         if (location.isEmpty()) {
-            throw new ApiException("Missing localtion on redirect");
+            throw new ApiException("Missing location on redirect");
         }
         return get(location);
     }
@@ -168,7 +169,7 @@ public class IdentityOAuthFlow extends ApiHttpMap {
             }
             if (location.contains("error=login.errors.throttled")) {
                 throw new ApiSecurityException(
-                        "Login failed due to invalid password, locked account or API throtteling!");
+                        "Login failed due to invalid password, locked account or API throttling!");
             }
             if (location.contains("&updated=dataprivacy")) {
                 throw new ApiSecurityException(
@@ -180,29 +181,29 @@ public class IdentityOAuthFlow extends ApiHttpMap {
             }
 
             if (location.contains("relayState=")) {
-                relayState = getUrlParm(location, "relayState");
+                relayState = getUrlParam(location, "relayState");
             }
             if (location.contains("hmac=")) {
-                hmac = getUrlParm(location, "hmac");
+                hmac = getUrlParam(location, "hmac");
             }
 
             if (location.contains("code=")) {
-                code = getUrlParm(location, "code");
+                code = getUrlParam(location, "code");
             }
             if (location.contains("&userId")) {
-                userId = getUrlParm(location, "userId");
+                userId = getUrlParam(location, "userId");
             }
             if (location.contains("&id_token=")) {
-                idToken = getUrlParm(location, "id_token");
+                idToken = getUrlParam(location, "id_token");
             }
             if (location.contains("&expires_in=")) {
-                expiresIn = getUrlParm(location, "expires_in");
+                expiresIn = getUrlParam(location, "expires_in");
             }
             if (location.contains("&access_token=")) {
-                accessToken = getUrlParm(location, "access_token");
+                accessToken = getUrlParam(location, "access_token");
             }
             if (location.contains("#state=")) {
-                state = getUrlParm(location, "state", "#");
+                state = getUrlParam(location, "state", "#");
             }
 
         }
@@ -213,7 +214,7 @@ public class IdentityOAuthFlow extends ApiHttpMap {
         try {
             if (url.contains("code_challenge")) {
                 codeVerifier = generateCodeVerifier();
-                codeChallenge = generateCodeChallange(codeVerifier);
+                codeChallenge = generateCodeChallenge(codeVerifier);
                 return url + "&code_challenge=" + codeChallenge;
             }
         } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
@@ -230,9 +231,9 @@ public class IdentityOAuthFlow extends ApiHttpMap {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(codeVerifier);
     }
 
-    public static String generateCodeChallange(String codeVerifier)
+    public static String generateCodeChallenge(String codeVerifier)
             throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        byte[] bytes = codeVerifier.getBytes("US-ASCII");
+        byte[] bytes = codeVerifier.getBytes(StandardCharsets.US_ASCII);
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         messageDigest.update(bytes, 0, bytes.length);
         byte[] digest = messageDigest.digest();

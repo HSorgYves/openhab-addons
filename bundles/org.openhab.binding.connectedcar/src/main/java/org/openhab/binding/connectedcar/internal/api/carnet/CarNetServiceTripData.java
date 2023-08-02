@@ -21,7 +21,6 @@ import java.util.Comparator;
 import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.connectedcar.internal.api.ApiBaseService;
 import org.openhab.binding.connectedcar.internal.api.ApiException;
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CarNetTripData;
@@ -75,19 +74,14 @@ public class CarNetServiceTripData extends ApiBaseService {
 
     @Override
     public boolean serviceUpdate() throws ApiException {
-        boolean updated = update("shortTerm", null);
-        return updated | update("longTerm", null);
+        boolean updated = doUpdate("shortTerm");
+        return updated | doUpdate("longTerm");
     }
 
-    private boolean update(String type, @Nullable Map<String, ChannelIdMapEntry> channels) throws ApiException {
+    private boolean doUpdate(String type) throws ApiException {
         boolean updated = false;
         CarNetTripData std = ((CarNetApi) api).getTripData(type);
-        Collections.sort(std.tripDataList.tripData, Collections.reverseOrder(new Comparator<CarNetTripDataEntry>() {
-            @Override
-            public int compare(CarNetTripDataEntry a, CarNetTripDataEntry b) {
-                return a.timestamp.compareTo(b.timestamp);
-            }
-        }));
+        std.tripDataList.tripData.sort(Collections.reverseOrder(Comparator.comparing(a -> a.timestamp)));
 
         CombinedConfig config = getConfig();
         boolean shortTerm = type.contains("short");

@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link ShellyChannelCache} implements a caching layer for channel updates.
+ * The {@link ChannelCache} implements a caching layer for channel updates.
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -42,10 +42,10 @@ public class ChannelCache {
 
     public ChannelCache(ThingBaseHandler thingHandler, String thingId) {
         this.thingHandler = thingHandler;
-        setthingId(thingId);
+        settingId(thingId);
     }
 
-    public void setthingId(String thingId) {
+    public void settingId(String thingId) {
         this.thingId = thingId;
     }
 
@@ -67,7 +67,6 @@ public class ChannelCache {
      * messing up the log with those updates)
      *
      * @param channelId Channel id
-     * @param value Value (State)
      * @param forceUpdate true: ignore cached data, force update; false check cache of changed data
      * @return true, if successful
      */

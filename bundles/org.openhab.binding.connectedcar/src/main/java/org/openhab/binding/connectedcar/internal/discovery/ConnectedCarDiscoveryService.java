@@ -33,7 +33,6 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.ThingTypeUID;
 import org.openhab.core.thing.ThingUID;
-import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +51,7 @@ public class ConnectedCarDiscoveryService extends AbstractDiscoveryService imple
     private ThingUID bridgeUID;
     private static final int TIMEOUT = 10;
 
-    public ConnectedCarDiscoveryService(AccountHandler bridgeHandler, Bundle bundle) {
+    public ConnectedCarDiscoveryService(AccountHandler bridgeHandler) {
         super(SUPPORTED_THING_TYPES_UIDS, TIMEOUT);
         this.accountHandler = bridgeHandler;
         this.bridgeUID = bridgeHandler.getThing().getUID();
@@ -67,7 +66,7 @@ public class ConnectedCarDiscoveryService extends AbstractDiscoveryService imple
             return;
         }
         for (VehicleDetails vehicle : vehicleList) {
-            logger.debug("{} Thing with id {} discovered", vehicle.brand, vehicle.vin);
+            logger.debug("{} Thing with id {} discovered", vehicle.brand, vehicle.vin);
             Map<String, Object> properties = new TreeMap<String, Object>();
             ThingTypeUID tuid;
             switch (vehicle.brand) {
@@ -94,7 +93,7 @@ public class ConnectedCarDiscoveryService extends AbstractDiscoveryService imple
             properties.put(PROPERTY_COLOR, vehicle.color);
             properties.put(PROPERTY_ENGINE, vehicle.engine);
             properties.put(PROPERTY_TRANS, vehicle.transmission);
-            logger.debug("{}: Adding discovered thing with id {}", vehicle.getId(), uid.toString());
+            logger.debug("{}: Adding discovered thing with id {}", vehicle.getId(), uid);
             DiscoveryResult result = DiscoveryResultBuilder.create(uid).withBridge(bridgeUID).withProperties(properties)
                     .withRepresentationProperty(PROPERTY_VIN).withLabel(vehicle.model).build();
             thingDiscovered(result);

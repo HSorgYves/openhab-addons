@@ -130,8 +130,8 @@ public class WeConnectServiceStatus extends ApiBaseService {
                 channels, CHANNEL_GROUP_STATUS, status.vehicleLights != null
                         && status.vehicleLights.lightsStatus != null && status.vehicleLights.lightsStatus.value != null,
                 CHANNEL_STATUS_LIGHTS);
-        addChannels(channels, CHANNEL_GROUP_LOCATION, data.vehicleLocation.isValid(), CHANNEL_LOCATTION_GEO,
-                CHANNEL_LOCATTION_ADDRESS, CHANNEL_LOCATTION_TIME);
+        addChannels(channels, CHANNEL_GROUP_LOCATION, data.vehicleLocation.isValid(), CHANNEL_LOCATION_GEO,
+                CHANNEL_LOCATION_ADDRESS, CHANNEL_LOCATION_TIME);
         addChannels(channels, CHANNEL_GROUP_LOCATION, data.parkingPosition.isValid(), CHANNEL_PARK_LOCATION,
                 CHANNEL_PARK_ADDRESS, CHANNEL_PARK_TIME);
         if (status.access != null && status.access.accessStatus != null && status.access.accessStatus.value != null) {
@@ -216,7 +216,7 @@ public class WeConnectServiceStatus extends ApiBaseService {
                 if ("maximum".equalsIgnoreCase(maxCurrent)) {
                     maxCurrent = "255";
                 }
-                if ("".equals(maxCurrent)) {
+                if (maxCurrent.isEmpty()) {
                     updated |= updateChannel(CHANNEL_GROUP_CHARGER, CHANNEL_CHARGER_MAXCURRENT, UnDefType.UNDEF);
                 } else if (Character.isDigit(maxCurrent.charAt(0))) {
                     updated |= updateChannel(CHANNEL_GROUP_CHARGER, CHANNEL_CHARGER_MAXCURRENT,
@@ -273,15 +273,14 @@ public class WeConnectServiceStatus extends ApiBaseService {
                 on |= "on".equals(getString(
                         status.climatisation.windowHeatingStatus.value.windowHeatingStatus.get(i).windowHeatingState));
             }
-            updated |= updateChannel(CHANNEL_CONTROL_WINHEAT, on ? OnOffType.ON : OnOffType.OFF);
+            updated = updateChannel(CHANNEL_CONTROL_WINHEAT, on ? OnOffType.ON : OnOffType.OFF);
         }
         return updated;
     }
 
     private boolean updateMaintenanceStatus(WCVehicleStatusData status) {
         boolean updated = false;
-        if (status != null && status.vehicleHealthInspection != null
-                && status.vehicleHealthInspection.maintenanceStatus != null
+        if (status.vehicleHealthInspection != null && status.vehicleHealthInspection.maintenanceStatus != null
                 && status.vehicleHealthInspection.maintenanceStatus.value != null) {
             WCMaintenanceStatus data = status.vehicleHealthInspection.maintenanceStatus.value;
             int odometer = getInteger(data.mileageKm); // sometimes the API returns 0
@@ -306,13 +305,13 @@ public class WeConnectServiceStatus extends ApiBaseService {
 
     private boolean updateLightStatus(WCVehicleStatusData status) {
         boolean updated = false;
-        if (status != null && status.vehicleLights != null && status.vehicleLights.lightsStatus != null
+        if (status.vehicleLights != null && status.vehicleLights.lightsStatus != null
                 && status.vehicleLights.lightsStatus.value != null) {
             boolean lightsOn = false;
             for (WCSingleStatusItem light : status.vehicleLights.lightsStatus.value.lights) {
                 lightsOn |= "on".equalsIgnoreCase(light.status);
             }
-            updated |= updateChannel(CHANNEL_STATUS_LIGHTS, getOnOff(lightsOn));
+            updated = updateChannel(CHANNEL_STATUS_LIGHTS, getOnOff(lightsOn));
         }
         return updated;
     }
@@ -321,9 +320,9 @@ public class WeConnectServiceStatus extends ApiBaseService {
         boolean updated = false;
         if (status.vehicleLocation.isValid()) {
             PointType point = status.vehicleLocation.asPointType();
-            updated |= updateChannel(CHANNEL_LOCATTION_GEO, point);
-            updated |= updateLocationAddress(point, CHANNEL_LOCATTION_ADDRESS);
-            updated |= updateChannel(CHANNEL_LOCATTION_TIME, getDateTime(status.vehicleLocation.parkingTimeUTC));
+            updated |= updateChannel(CHANNEL_LOCATION_GEO, point);
+            updated |= updateLocationAddress(point, CHANNEL_LOCATION_ADDRESS);
+            updated |= updateChannel(CHANNEL_LOCATION_TIME, getDateTime(status.vehicleLocation.parkingTimeUTC));
         }
         if (status.parkingPosition.isValid()) {
             PointType point = status.parkingPosition.asPointType();
@@ -336,8 +335,7 @@ public class WeConnectServiceStatus extends ApiBaseService {
 
     private boolean updateAccess(WCVehicleStatusData status) {
         boolean updated = false;
-        if (status != null && status.access != null && status.access.accessStatus != null
-                && status.access.accessStatus.value != null) {
+        if (status.access != null && status.access.accessStatus != null && status.access.accessStatus.value != null) {
             updated |= updateChannel(CHANNEL_STATUS_LOCKED,
                     getOnOff(status.access.accessStatus.value.overallStatus.equalsIgnoreCase("safe")));
 
@@ -361,7 +359,7 @@ public class WeConnectServiceStatus extends ApiBaseService {
                             case "open:":
                             case "closed":
                                 channelSuf = "State";
-                                value = "closed".equalsIgnoreCase(s) ? OpenClosedType.CLOSED : OpenClosedType.CLOSED;
+                                value = "closed".equalsIgnoreCase(s) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
                                 break;
                             case "unsupported":
                                 channelSuf = "State";
@@ -390,7 +388,7 @@ public class WeConnectServiceStatus extends ApiBaseService {
                             case "open:":
                             case "closed":
                                 channelSuf = "State";
-                                value = "closed".equalsIgnoreCase(s) ? OpenClosedType.CLOSED : OpenClosedType.CLOSED;
+                                value = "closed".equalsIgnoreCase(s) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
                                 break;
                             case "unsupported":
                                 channelSuf = "State";

@@ -15,7 +15,6 @@ package org.openhab.binding.connectedcar.internal.handler;
 import static org.openhab.binding.connectedcar.internal.BindingConstants.*;
 
 import java.time.ZoneId;
-import java.util.Map;
 
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Temperature;
@@ -25,7 +24,6 @@ import org.openhab.binding.connectedcar.internal.api.ApiException;
 import org.openhab.binding.connectedcar.internal.api.skodae.SEServiceStatus;
 import org.openhab.binding.connectedcar.internal.provider.CarChannelTypeProvider;
 import org.openhab.binding.connectedcar.internal.provider.ChannelDefinitions;
-import org.openhab.binding.connectedcar.internal.provider.ChannelDefinitions.ChannelIdMapEntry;
 import org.openhab.binding.connectedcar.internal.util.TextResources;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
@@ -37,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link EnyakVehicleHandler} implements the Vehicle Handler for Skoda Enyak
+ * The {@link EnyakVehicleHandler} implements the Vehicle Handler for Škoda Enyak
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -50,11 +48,6 @@ public class EnyakVehicleHandler extends ThingBaseHandler {
     public EnyakVehicleHandler(Thing thing, TextResources resources, ZoneId zoneId, ChannelDefinitions idMapper,
             CarChannelTypeProvider channelTypeProvider) throws ApiException {
         super(thing, resources, zoneId, idMapper, channelTypeProvider);
-    }
-
-    @Override
-    public boolean createBrandChannels(Map<String, ChannelIdMapEntry> channels) {
-        return false;
     }
 
     /**
@@ -73,7 +66,7 @@ public class EnyakVehicleHandler extends ThingBaseHandler {
         boolean processed = true;
         String action = "";
         String actionStatus = "";
-        boolean switchOn = (command instanceof OnOffType) && (OnOffType) command == OnOffType.ON;
+        boolean switchOn = command == OnOffType.ON;
         logger.debug("{}: Channel {} received command {}", thingId, channelId, command);
         try {
             switch (channelId) {

@@ -33,7 +33,7 @@ import org.openhab.core.library.types.PointType;
 import org.openhab.core.types.UnDefType;
 
 /**
- * {@link CarNetServiceDestinations} implements the destination hostory
+ * {@link CarNetServiceDestinations} implements the destination history
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -54,9 +54,9 @@ public class CarNetServiceDestinations extends ApiBaseService {
     public boolean createChannels(Map<String, ChannelIdMapEntry> channels) throws ApiException {
         if (getConfig().vehicle.numDestinations > 0) {
             try {
-                update(channels);
+                doUpdate(channels);
                 return true;
-            } catch (ApiException e) {
+            } catch (ApiException ignored) {
             }
         }
         return false;
@@ -70,23 +70,18 @@ public class CarNetServiceDestinations extends ApiBaseService {
 
     @Override
     public boolean serviceUpdate() throws ApiException {
-        return update(null);
+        return doUpdate(null);
     }
 
-    private boolean update(@Nullable Map<String, ChannelIdMapEntry> channels) throws ApiException {
+    private boolean doUpdate(@Nullable Map<String, ChannelIdMapEntry> channels) throws ApiException {
         boolean updated = false;
         CarNetDestinationList dest = ((CarNetApi) api).getDestinations();
-        if (dest.destination.size() == 0) {
+        if (dest.destination.isEmpty()) {
             // no/empty list
             return false;
         }
 
-        Collections.sort(dest.destination, Collections.reverseOrder(new Comparator<CarNetDestination>() {
-            @Override
-            public int compare(CarNetDestination a, CarNetDestination b) {
-                return a.id.compareTo(b.id);
-            }
-        }));
+        dest.destination.sort(Collections.reverseOrder(Comparator.comparing(a -> a.id)));
 
         int numDest = getConfig().vehicle.numDestinations;
         int i = 0; // latest first
@@ -114,8 +109,8 @@ public class CarNetServiceDestinations extends ApiBaseService {
                         updated |= updateChannel(CHANNEL_DEST_COUNTY, UnDefType.UNDEF);
                     }
 
-                    if ((entry.geoCoordinate != null) && (entry.geoCoordinate.getLattitude() != 0)) {
-                        PointType location = new PointType(new DecimalType(entry.geoCoordinate.getLattitude()),
+                    if ((entry.geoCoordinate != null) && (entry.geoCoordinate.getLatitude() != 0)) {
+                        PointType location = new PointType(new DecimalType(entry.geoCoordinate.getLatitude()),
                                 new DecimalType(entry.geoCoordinate.getLongitude()));
                         updated |= updateChannel(CHANNEL_DEST_GEO, location);
                     } else {

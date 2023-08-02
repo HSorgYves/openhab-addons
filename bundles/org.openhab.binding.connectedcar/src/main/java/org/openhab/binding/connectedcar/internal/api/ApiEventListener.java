@@ -24,13 +24,13 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public interface ApiEventListener {
 
-    public void onActionSent(String service, String action, String requestId);
+    void onActionSent(String service, String action, String requestId);
 
-    public void onActionTimeout(String service, String action, String requestId);
+    void onActionTimeout(String service, String action, String requestId);
 
-    public void onActionResult(String service, String action, String requestId, String status, String statusDetail);
+    void onActionResult(String service, String action, String requestId, String status, String statusDetail);
 
-    public void onActionNotification(String service, String action, String message);
+    void onActionNotification(String service, String action, String message);
 
-    public void onRateLimit(int rateLimit);
+    void onRateLimit(int rateLimit);
 }

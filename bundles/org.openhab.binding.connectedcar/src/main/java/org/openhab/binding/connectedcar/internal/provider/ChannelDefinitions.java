@@ -52,7 +52,7 @@ public class ChannelDefinitions {
     private static final Map<String, ChannelIdMapEntry> CHANNEL_DEFINITIONS = new ConcurrentHashMap<>();
     private final TextResources resources;
 
-    public class ChannelIdMapEntry {
+    public static class ChannelIdMapEntry {
         private final TextResources resources;
 
         public String id = "";
@@ -95,13 +95,14 @@ public class ChannelDefinitions {
         }
 
         public ChannelTypeUID getChannelTypeUID() {
-            String groupIndex = ""; // getGroupIndex();
-            return new ChannelTypeUID(BINDING_ID, groupIndex.isEmpty() ? channelName : channelName + groupIndex);
+            // String groupIndex = ""; // getGroupIndex();
+            // return new ChannelTypeUID(BINDING_ID, groupIndex.isEmpty() ? channelName : channelName + groupIndex);
+            return new ChannelTypeUID(BINDING_ID, channelName);
         }
 
         public String getLabel() {
             String key = channelName;
-            Character index = channelName.charAt(key.length() - 1);
+            char index = channelName.charAt(key.length() - 1);
             boolean hasIndex = Character.isDigit(index);
             if (hasIndex) {
                 key = key.substring(0, key.length() - 1); // ignore channel index for lookup
@@ -118,7 +119,7 @@ public class ChannelDefinitions {
                 return label;
             }
 
-            return groupName + "_" + label.replaceAll("[ /\\(\\)]", "");
+            return groupName + "_" + label.replaceAll("[ /()]", "");
         }
 
         public String getDescription() {
@@ -265,7 +266,7 @@ public class ChannelDefinitions {
     private ChannelIdMapEntry add(String name, String id, String channel, String itemType, String group,
             @Nullable Unit<?> unit, boolean advanced, boolean readOnly) {
         if (!channel.isEmpty() && (group.isEmpty() || itemType.isEmpty())) {
-            logger.warn("Incomplete channel definitoion: SYMNAME={}, group={}, chan={}, type={}", name, group, channel,
+            logger.warn("Incomplete channel definition: SYMNAME={}, group={}, chan={}, type={}", name, group, channel,
                     itemType);
         }
         ChannelIdMapEntry entry = new ChannelIdMapEntry(resources);
@@ -276,7 +277,7 @@ public class ChannelDefinitions {
         entry.itemType = itemType;
         entry.unit = ((unit == null) && ITEMT_PERCENT.equals(itemType)) ? Units.PERCENT : unit;
         entry.advanced = advanced;
-        entry.readOnly = group.equals(CHANNEL_GROUP_STATUS) || group.equals(CHANNEL_GROUP_GENERAL) ? true : readOnly;
+        entry.readOnly = group.equals(CHANNEL_GROUP_STATUS) || group.equals(CHANNEL_GROUP_GENERAL) || readOnly;
 
         entry.min = entry.getMin();
         entry.max = entry.getMax();
@@ -489,9 +490,9 @@ public class ChannelDefinitions {
 
         // Group location
         group = CHANNEL_GROUP_LOCATION;
-        add("", "", CHANNEL_LOCATTION_GEO, ITEMT_LOCATION, group);
-        add("", "", CHANNEL_LOCATTION_ADDRESS, ITEMT_STRING, group);
-        add("", "", CHANNEL_LOCATTION_TIME, ITEMT_DATETIME, group);
+        add("", "", CHANNEL_LOCATION_GEO, ITEMT_LOCATION, group);
+        add("", "", CHANNEL_LOCATION_ADDRESS, ITEMT_STRING, group);
+        add("", "", CHANNEL_LOCATION_TIME, ITEMT_DATETIME, group);
         add("", "", CHANNEL_PARK_LOCATION, ITEMT_LOCATION, group);
         add("", "", CHANNEL_PARK_ADDRESS, ITEMT_STRING, group);
         add("", "", CHANNEL_PARK_TIME, ITEMT_DATETIME, group);
@@ -587,7 +588,7 @@ public class ChannelDefinitions {
         add("", "", CHANNEL_RFID_STATUS, ITEMT_STRING, group);
         add("", "", CHANNEL_RFID_UPDATE, ITEMT_DATETIME, group);
 
-        // Chasrging Records
+        // Charging Records
         group = CHANNEL_CHANNEL_GROUP_TRANSACTIONS;
         add("", "", CHANNEL_TRANS_ID, ITEMT_STRING, group, null, true, true);
         add("", "", CHANNEL_TRANS_PUBLIC, ITEMT_SWITCH, group);
@@ -629,8 +630,8 @@ public class ChannelDefinitions {
         return add(mkChannelId(group, channel), channel, channel, itemType, group, unit, advanced, readOnly);
     }
 
-    public void dumpChannelDefinitions(String thindId) {
-        try (FileWriter myWriter = new FileWriter("ConnectedCarChannels_" + thindId + ".md")) {
+    public void dumpChannelDefinitions(String thingId) {
+        try (FileWriter myWriter = new FileWriter("ConnectedCarChannels_" + thingId + ".md")) {
             String lastGroup = "";
             for (Map.Entry<String, ChannelIdMapEntry> m : CHANNEL_DEFINITIONS.entrySet()) {
                 ChannelIdMapEntry e = m.getValue();
@@ -642,7 +643,7 @@ public class ChannelDefinitions {
                     lastGroup = e.groupName;
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
     }
 }

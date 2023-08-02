@@ -45,7 +45,7 @@ import org.openhab.core.types.State;
 import org.openhab.core.types.UnDefType;
 
 /**
- * The {@link SEServiceStatus} implements the Status Service for Skoda Enyak.
+ * The {@link SEServiceStatus} implements the Status Service for Škoda Enyak.
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -118,10 +118,9 @@ public class SEServiceStatus extends ApiBaseService {
 
     private boolean updateRangeStatus(SEVehicleStatusData data) {
         boolean updated = false;
-        String group = CHANNEL_GROUP_RANGE;
         SEChargerStatus s = data.status.charger;
         if (s != null) {
-            updated |= updateChannel(group, CHANNEL_RANGE_TOTAL,
+            updated = updateChannel(CHANNEL_GROUP_RANGE, CHANNEL_RANGE_TOTAL,
                     toQuantityType(getLong(s.battery.cruisingRangeElectricInMeters) / 1000.0, 1, KILOMETRE));
         }
         return updated;
@@ -196,21 +195,20 @@ public class SEServiceStatus extends ApiBaseService {
             for (SEHeatingStatus s : status.windowsHeatingStatuses) {
                 on |= getOnOffType(s.state) == OnOffType.ON;
             }
-            updated |= updateChannel(CHANNEL_GROUP_CONTROL, CHANNEL_CONTROL_WINHEAT, getOnOff(on));
+            updated = updateChannel(CHANNEL_GROUP_CONTROL, CHANNEL_CONTROL_WINHEAT, getOnOff(on));
         }
         return updated;
     }
 
     private boolean updatePositionStatus(SEVehicleStatusData data) {
         boolean updated = false;
-        String group = CHANNEL_GROUP_LOCATION;
         if (data.status == null) {
-            return updated;
+            return false;
         }
         SEParkingPositionStatus s = data.status.parkingPosition;
         if (s != null) {
             PointType point = new PointType(new DecimalType(s.latitude), new DecimalType(s.longitude));
-            updated |= updateChannel(group, CHANNEL_PARK_LOCATION, point);
+            updated |= updateChannel(CHANNEL_GROUP_LOCATION, CHANNEL_PARK_LOCATION, point);
             updated |= updateLocationAddress(point, CHANNEL_PARK_ADDRESS);
             updated |= updateChannel(CHANNEL_PARK_TIME, getDateTime(s.lastUpdatedAt));
         }
@@ -236,7 +234,7 @@ public class SEServiceStatus extends ApiBaseService {
                         odometer > 0 ? getDecimal(odometer) : UnDefType.UNDEF);
                 if (s.remote.lights != null) {
                     updated |= updateChannel(group, CHANNEL_STATUS_LIGHTS,
-                            getOnOff(s.remote.lights.overallStatus == "ON"));
+                            getOnOff(s.remote.lights.overallStatus.equals("ON")));
                 }
 
                 group = CHANNEL_GROUP_GENERAL;
@@ -244,23 +242,23 @@ public class SEServiceStatus extends ApiBaseService {
                     updated |= updateChannel(group, CHANNEL_GENERAL_UPDATED, getDateTime(s.remote.capturedAt));
                 }
 
-                group = CHANNEL_GROUP_DOORS;
+                // group = CHANNEL_GROUP_DOORS;
                 if (s.remote.doors != null) {
                     for (SEVehicleStatusItem door : s.remote.doors) {
                         if (door.name != null && MAP_DOOR_NAME.containsKey(door.name)) {
                             @Nullable
                             String channelPre = MAP_DOOR_NAME.get(door.name);
-                            updated |= updateStatusItem(door, group, channelPre, "Locked");
+                            updated |= updateStatusItem(door, channelPre, "Locked");
                         }
                     }
                 }
-                group = CHANNEL_GROUP_WINDOWS;
+                // group = CHANNEL_GROUP_WINDOWS;
                 if (s.remote.windows != null) {
                     for (SEVehicleStatusItem window : s.remote.windows) {
                         if (window.name != null && MAP_WINDOW_NAME.containsKey(window.name)) {
                             @Nullable
                             String channelPre = MAP_WINDOW_NAME.get(window.name);
-                            updated |= updateStatusItem(window, group, channelPre, "Pos");
+                            updated |= updateStatusItem(window, channelPre, "Pos");
                         }
                     }
                 }
@@ -269,8 +267,7 @@ public class SEServiceStatus extends ApiBaseService {
         return updated;
     }
 
-    private boolean updateStatusItem(SEVehicleStatusItem item, String group, @Nullable String channelPre,
-            String sufLock) {
+    private boolean updateStatusItem(SEVehicleStatusItem item, @Nullable String channelPre, String sufLock) {
         String channelSuf = "";
         State value = UnDefType.UNDEF;
         String state = item.status.toLowerCase();

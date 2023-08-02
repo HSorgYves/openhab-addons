@@ -16,7 +16,6 @@ import java.util.Locale;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.binding.connectedcar.internal.handler.HandlerFactory;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.osgi.framework.Bundle;
@@ -26,7 +25,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * The {@link HandlerFactory} retrieves localized text resources as defined in properties file.
+ * The {@link TextResources} retrieves localized text resources as defined in properties file.
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -57,7 +56,7 @@ public class TextResources {
             if (message != null) {
                 return message;
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ignored) {
         }
         return "Unable to load message for key " + key;
     }

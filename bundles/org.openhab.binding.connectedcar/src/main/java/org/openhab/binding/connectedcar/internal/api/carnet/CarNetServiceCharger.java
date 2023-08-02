@@ -58,38 +58,36 @@ public class CarNetServiceCharger extends ApiBaseService {
             return false;
         }
         CarNetChargerStatusData sd = cs.status.chargingStatusData;
-        if (sd != null) {
-            State current = cs.settings != null ? getDecimal(cs.settings.maxChargeCurrent.content) : UnDefType.UNDEF;
-            updated |= updateChannel(CHANNEL_CHARGER_POWER, current);
-            if (sd.chargingState != null) {
-                updated |= updateChannel(CHANNEL_CONTROL_CHARGER, getOnOffType(sd.chargingState.content));
-                updated |= updateChannel(CHANNEL_CHARGER_CHG_STATE, getStringType(sd.chargingState.content));
-                updated |= updateChannel(CHANNEL_CHARGER_STATUS, getStringType(sd.chargingState.content));
+        State current = cs.settings != null ? getDecimal(cs.settings.maxChargeCurrent.content) : UnDefType.UNDEF;
+        updated |= updateChannel(CHANNEL_CHARGER_POWER, current);
+        if (sd.chargingState != null) {
+            updated |= updateChannel(CHANNEL_CONTROL_CHARGER, getOnOffType(sd.chargingState.content));
+            updated |= updateChannel(CHANNEL_CHARGER_CHG_STATE, getStringType(sd.chargingState.content));
+            updated |= updateChannel(CHANNEL_CHARGER_STATUS, getStringType(sd.chargingState.content));
+        }
+        if (sd.chargingStateErrorCode != null) {
+            updated |= updateChannel(CHANNEL_CHARGER_ERROR, getDecimal(sd.chargingStateErrorCode.content));
+        }
+        if (sd.externalPowerSupplyState != null) {
+            updated |= updateChannel(CHANNEL_CHARGER_PWR_STATE, getStringType(sd.externalPowerSupplyState.content));
+        }
+        if (sd.energyFlow != null) {
+            updated |= updateChannel(CHANNEL_CHARGER_FLOW, getStringType(sd.energyFlow.content));
+        }
+        if (cs.status.batteryStatusData != null) {
+            updated |= updateChannel(CHANNEL_CHARGER_BAT_STATE,
+                    getDecimal(cs.status.batteryStatusData.stateOfCharge.content));
+            if (cs.status.batteryStatusData.remainingChargingTime != null) {
+                int remaining = getDecimal(cs.status.batteryStatusData.remainingChargingTime.content).intValue();
+                updated |= updateChannel(CHANNEL_CHARGER_REMAINING, remaining == 65535 ? UnDefType.UNDEF
+                        : getDecimal(cs.status.batteryStatusData.remainingChargingTime.content));
             }
-            if (sd.chargingStateErrorCode != null) {
-                updated |= updateChannel(CHANNEL_CHARGER_ERROR, getDecimal(sd.chargingStateErrorCode.content));
-            }
-            if (sd.externalPowerSupplyState != null) {
-                updated |= updateChannel(CHANNEL_CHARGER_PWR_STATE, getStringType(sd.externalPowerSupplyState.content));
-            }
-            if (sd.energyFlow != null) {
-                updated |= updateChannel(CHANNEL_CHARGER_FLOW, getStringType(sd.energyFlow.content));
-            }
-            if (cs.status.batteryStatusData != null) {
-                updated |= updateChannel(CHANNEL_CHARGER_BAT_STATE,
-                        getDecimal(cs.status.batteryStatusData.stateOfCharge.content));
-                if (cs.status.batteryStatusData.remainingChargingTime != null) {
-                    int remaining = getDecimal(cs.status.batteryStatusData.remainingChargingTime.content).intValue();
-                    updated |= updateChannel(CHANNEL_CHARGER_REMAINING, remaining == 65535 ? UnDefType.UNDEF
-                            : getDecimal(cs.status.batteryStatusData.remainingChargingTime.content));
-                }
-            }
-            if (cs.status.plugStatusData != null) {
-                updated |= updateChannel(CHANNEL_CHARGER_LOCK_STATE,
-                        getOnOff("locked".equals(getString(cs.status.plugStatusData.lockState.content))));
-                updated |= updateChannel(CHANNEL_CHARGER_PLUG_STATE,
-                        getStringType(cs.status.plugStatusData.plugState.content));
-            }
+        }
+        if (cs.status.plugStatusData != null) {
+            updated |= updateChannel(CHANNEL_CHARGER_LOCK_STATE,
+                    getOnOff("locked".equals(getString(cs.status.plugStatusData.lockState.content))));
+            updated |= updateChannel(CHANNEL_CHARGER_PLUG_STATE,
+                    getStringType(cs.status.plugStatusData.plugState.content));
         }
         return updated;
     }

@@ -52,7 +52,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 /**
- * Helperfunctions
+ * Helper functions
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -154,7 +154,7 @@ public class Helpers {
     }
 
     public static Integer getInteger(@Nullable Integer value) {
-        return (value != null ? (Integer) value : 0);
+        return (value != null ? value : 0);
     }
 
     public static Long getLong(@Nullable Long value) {
@@ -166,7 +166,7 @@ public class Helpers {
     }
 
     public static Boolean getBool(@Nullable Boolean value) {
-        return (value != null ? (Boolean) value : false);
+        return (value != null ? value : false);
     }
 
     public static State getStringType(@Nullable String value) {
@@ -218,7 +218,7 @@ public class Helpers {
         if (value == null) {
             return UnDefType.NULL;
         }
-        BigDecimal bd = new BigDecimal(value.doubleValue());
+        BigDecimal bd = BigDecimal.valueOf(value);
         if (digits >= 1) {
             bd = bd.setScale(digits, RoundingMode.HALF_EVEN);
         }
@@ -226,7 +226,7 @@ public class Helpers {
     }
 
     public static State toQuantityType(@Nullable Integer value, int digits, Unit<?> unit) {
-        return toQuantityType(value.doubleValue(), digits, unit);
+        return toQuantityType(value == null ? null : value.doubleValue(), digits, unit);
     }
 
     public static State toQuantityType(@Nullable Number value, Unit<?> unit) {
@@ -292,8 +292,8 @@ public class Helpers {
             input.put(challengeBytes);
             byte[] digest = hash.digest(input.array());
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < digest.length; ++i) {
-                sb.append(Integer.toHexString((digest[i] & 0xFF) | 0x100).substring(1, 3));
+            for (byte b : digest) {
+                sb.append(Integer.toHexString((b & 0xFF) | 0x100), 1, 3);
             }
             return sb.toString().toUpperCase();
         } catch (NoSuchAlgorithmException e) {
@@ -334,7 +334,7 @@ public class Helpers {
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(xqmauth_secret, "HmacSHA256"));
             xqmauth_val = toHexString(mac.doFinal(timestamp.getBytes()));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return xqmauth_val;
     }
@@ -344,7 +344,9 @@ public class Helpers {
         for (byte b : bytes) {
             formatter.format("%02x", b);
         }
-        return formatter.toString();
+        String hex = formatter.toString();
+        formatter.close();
+        return hex;
     }
 
     /**

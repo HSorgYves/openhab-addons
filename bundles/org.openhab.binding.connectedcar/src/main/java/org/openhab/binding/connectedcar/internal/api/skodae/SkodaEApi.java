@@ -54,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link SkodaEApi} implements the Skoda-E API calls
+ * {@link SkodaEApi} implements the Škoda-E API calls
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -72,7 +72,7 @@ public class SkodaEApi extends ApiWithOAuth {
 
     @Override
     public ArrayList<String> getVehicles() throws ApiException {
-        ApiHttpMap params = crerateParameters();
+        ApiHttpMap params = createParameters();
         String json = callApi("", config.api.apiDefaultUrl + "/v2/garage/vehicles", params.getHeaders(),
                 "getVehicleList", String.class);
         json = "{ \"data\":" + json + "}";
@@ -105,7 +105,7 @@ public class SkodaEApi extends ApiWithOAuth {
     }
 
     @Override
-    public String getHomeReguionUrl() {
+    public String getHomeRegionUrl() {
         return getApiUrl();
     }
 
@@ -172,35 +172,30 @@ public class SkodaEApi extends ApiWithOAuth {
     }
 
     public SEParkingPositionStatus getParkingPosition() throws ApiException {
-        return getValues2(SESERVICE_POSITIONVEHICLES, SEENDPOINT_PARKINGPOSITION, SEParkingPositionStatus.class);
+        ApiHttpMap params = createParameters2();
+        return callApi("",
+                "v1/" + SEApiJsonDTO.SESERVICE_POSITIONVEHICLES + "/{2}/" + SEApiJsonDTO.SEENDPOINT_PARKINGPOSITION,
+                params.getHeaders(),
+                "getValues_" + SEApiJsonDTO.SESERVICE_POSITIONVEHICLES + "." + SEApiJsonDTO.SEENDPOINT_PARKINGPOSITION,
+                SEParkingPositionStatus.class);
     }
 
     public SEVehicleStatusV2 getVehicleStatusV2() throws ApiException {
-        return getValuesV2(SESERVICE_VEHICLESTATUS, "", SEVehicleStatusV2.class);
+        ApiHttpMap params = createParameters();
+        return callApi("", "v2/" + SEApiJsonDTO.SESERVICE_VEHICLESTATUS + "/{2}/", params.getHeaders(),
+                "getValues_" + SEApiJsonDTO.SESERVICE_VEHICLESTATUS + ".", SEVehicleStatusV2.class);
     }
 
     @Override
     public String refreshVehicleStatus() {
-        // For now it's unclear if there is an API call to request a status update from
+        // For now, it's unclear if there is an API call to request a status update from
         // the vehicle
         return API_REQUEST_SUCCESSFUL;
     }
 
     private <T> T getValues(String service, String type, Class<T> classOfT) throws ApiException {
-        ApiHttpMap params = crerateParameters();
+        ApiHttpMap params = createParameters();
         return callApi("", "v1/" + service + "/{2}/" + type, params.getHeaders(), "getValues_" + service + "." + type,
-                classOfT);
-    }
-
-    private <T> T getValues2(String service, String type, Class<T> classOfT) throws ApiException {
-        ApiHttpMap params = createParameters2();
-        return callApi("", "v1/" + service + "/{2}/" + type, params.getHeaders(), "getValues_" + service + "." + type,
-                classOfT);
-    }
-
-    private <T> T getValuesV2(String service, String type, Class<T> classOfT) throws ApiException {
-        ApiHttpMap params = crerateParameters();
-        return callApi("", "v2/" + service + "/{2}/" + type, params.getHeaders(), "getValues_" + service + "." + type,
                 classOfT);
     }
 
@@ -208,7 +203,7 @@ public class SkodaEApi extends ApiWithOAuth {
     public String controlClimater(boolean start, String heaterSource) throws ApiException {
         String action = (start ? "Start" : "Stop");
         String body = "{\"type\":\"" + action + "\"}";
-        return sendAction(SESERVICE_CLIMATISATION, "", body);
+        return sendSettings(SESERVICE_CLIMATISATION, body);
     }
 
     @Override
@@ -218,7 +213,7 @@ public class SkodaEApi extends ApiWithOAuth {
         request.airConditioningSettings.windowHeatingEnabled = start;
         request.type = "UpdateSettings";
         String payload = gson.toJson(request);
-        if (payload == null) {
+        if (payload.isEmpty()) {
             throw new ApiException("Unable to create payload");
         }
         return sendSettings(SESERVICE_CLIMATISATION, payload);
@@ -229,11 +224,11 @@ public class SkodaEApi extends ApiWithOAuth {
         try {
             SEClimaZoneSettingsRequest request = new SEClimaZoneSettingsRequest();
             request.airConditioningSettings = getClimaterSettings();
-            Double tempK = SIUnits.CELSIUS.getConverterToAny(Units.KELVIN).convert(tempC);
-            request.airConditioningSettings.targetTemperatureInKelvin = tempK;
+            request.airConditioningSettings.targetTemperatureInKelvin = SIUnits.CELSIUS.getConverterToAny(Units.KELVIN)
+                    .convert(tempC);
             request.type = "UpdateSettings";
             String payload = gson.toJson(request);
-            if (payload == null) {
+            if (payload.isEmpty()) {
                 throw new ApiException("Unable to create payload");
             }
             return sendSettings(SESERVICE_CLIMATISATION, payload);
@@ -246,7 +241,7 @@ public class SkodaEApi extends ApiWithOAuth {
     public String controlCharger(boolean start) throws ApiException {
         String action = (start ? "Start" : "Stop");
         String body = "{\"type\":\"" + action + "\"}";
-        return sendAction(SESERVICE_CHARGING, "", body);
+        return sendSettings(SESERVICE_CHARGING, body);
     }
 
     @Override
@@ -254,7 +249,7 @@ public class SkodaEApi extends ApiWithOAuth {
         SEChargerSettings settings = getChargerSettings();
         // status.chargingSettings.maxChargeCurrentAC = "" + maxCurrent;
         final String payload = gson.toJson(settings);
-        if (payload == null) {
+        if (payload.isEmpty()) {
             throw new ApiException("Unable to create payload");
         }
         return sendSettings(SESERVICE_CHARGING, payload);
@@ -267,25 +262,19 @@ public class SkodaEApi extends ApiWithOAuth {
         request.chargingSettings.targetStateOfChargeInPercent = targetLevel;
         request.type = "UpdateSettings";
         String payload = gson.toJson(request);
-        if (payload == null) {
+        if (payload.isEmpty()) {
             throw new ApiException("Unable to create payload");
         }
         return sendSettings(SESERVICE_CHARGING, payload);
     }
 
-    private String sendAction(String service, String action, String body) throws ApiException {
-        ApiHttpMap headers = crerateParameters().header(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE_JSON);
-        String json = http.post("v1/" + service + "/operation-requests?vin={2}", headers.getHeaders(), body).response;
-        return API_REQUEST_STARTED;
-    }
-
     private String sendSettings(String service, String body) throws ApiException {
-        ApiHttpMap headers = crerateParameters().header(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE_JSON);
-        String json = http.post("v1/" + service + "/operation-requests?vin={2}", headers.getHeaders(), body).response;
+        ApiHttpMap headers = createParameters().header(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE_JSON);
+        http.post("v1/" + service + "/operation-requests?vin={2}", headers.getHeaders(), body);
         return API_REQUEST_STARTED;
     }
 
-    private ApiHttpMap crerateParameters() throws ApiException {
+    private ApiHttpMap createParameters() throws ApiException {
         /*
          * accept: "application/json",
          * "content-type": "application/json;charset=utf-8",

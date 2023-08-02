@@ -43,8 +43,6 @@ import org.openhab.binding.connectedcar.internal.api.weconnect.WeConnectApiJsonD
 import org.openhab.binding.connectedcar.internal.handler.ThingHandlerInterface;
 import org.openhab.core.library.unit.SIUnits;
 import org.openhab.core.library.unit.Units;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link WeConnectApi} implements the WeConnect API calls
@@ -55,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 @NonNullByDefault
 public class WeConnectApi extends ApiWithOAuth implements BrandAuthenticator {
-    private final Logger logger = LoggerFactory.getLogger(WeConnectApi.class);
+    // private final Logger logger = LoggerFactory.getLogger(WeConnectApi.class);
     private Map<String, WCVehicle> vehicleData = new HashMap<>();
     private boolean capParkingPos = true;
 
@@ -70,13 +68,13 @@ public class WeConnectApi extends ApiWithOAuth implements BrandAuthenticator {
     }
 
     @Override
-    public String getHomeReguionUrl() {
+    public String getHomeRegionUrl() {
         return getApiUrl();
     }
 
     @Override
     public ArrayList<String> getVehicles() throws ApiException {
-        ApiHttpMap params = crerateParameters();
+        ApiHttpMap params = createParameters();
         WCVehicleList weList = callApi("", "/vehicles", params.getHeaders(), "getVehicleList", WCVehicleList.class);
         ArrayList<String> list = new ArrayList<String>();
         for (WCVehicle wev : weList.data) {
@@ -103,7 +101,7 @@ public class WeConnectApi extends ApiWithOAuth implements BrandAuthenticator {
         if (wcStatus != null && wcStatus.userCapabilities != null
                 && wcStatus.userCapabilities.capabilitiesStatus != null
                 && wcStatus.userCapabilities.capabilitiesStatus.value != null
-                && hasCapability(wcStatus.userCapabilities.capabilitiesStatus.value, WCCAPABILITY_PARKINGPOS)) {
+                && hasCapabilityParkingPosition(wcStatus.userCapabilities.capabilitiesStatus.value)) {
             status.parkingPosition = getParkingPosition();
         }
         // getChargingStations("50.577417", "7.240451");
@@ -111,24 +109,22 @@ public class WeConnectApi extends ApiWithOAuth implements BrandAuthenticator {
     }
 
     public void getChargingStations(String latitude, String longitude) throws ApiException {
-        String json = callApi("", "/charging-stations/v2?latitude=" + latitude + "&longitude=" + longitude,
-                crerateParameters().getHeaders(), "getChargingStations", String.class);
+        callApi("", "/charging-stations/v2?latitude=" + latitude + "&longitude=" + longitude,
+                createParameters().getHeaders(), "getChargingStations", String.class);
     }
 
     public GeoPosition getParkingPosition() throws ApiException {
         if (capParkingPos) {
             try {
-                WCParkingPosition pos = callApi("", "/vehicles/{2}/parkingposition", crerateParameters().getHeaders(),
+                WCParkingPosition pos = callApi("", "/vehicles/{2}/parkingposition", createParameters().getHeaders(),
                         "getParkingPosition", WCParkingPosition.class);
                 return new GeoPosition(pos.data);
             } catch (ApiException e) {
                 ApiResult res = e.getApiResult();
-                if (res.isHttpNoContent()) {
-                    // (Temporary) not available -> ignore
-                } else if ("4112".equals(res.getApiError().code) || res.isHttpNotFound() || res.isHttpUnauthorized()) {
+                if ("4112".equals(res.getApiError().code) || res.isHttpNotFound() || res.isHttpUnauthorized()) {
                     // Service/Capability not available: Ignore, but disable further calls
                     capParkingPos = false;
-                } else {
+                } else if (!res.isHttpNoContent()) {
                     throw e;
                 }
             }
@@ -143,13 +139,13 @@ public class WeConnectApi extends ApiWithOAuth implements BrandAuthenticator {
 
     @Override
     public String refreshVehicleStatus() {
-        // For now it's unclear if there is an API call to request a status update from
+        // For now, it's unclear if there is an API call to request a status update from
         // the vehicle
         return API_REQUEST_SUCCESSFUL;
     }
 
     private WCVehicleStatusData getWCStatus() throws ApiException {
-        ApiHttpMap params = crerateParameters();
+        ApiHttpMap params = createParameters();
         return callApi("", "vehicles/{2}/selectivestatus?jobs=all", params.getHeaders(), "getVehicleStatus",
                 WCVehicleStatusData.class);
     }
@@ -157,7 +153,7 @@ public class WeConnectApi extends ApiWithOAuth implements BrandAuthenticator {
     @Override
     public String controlClimater(boolean start, String heaterSource) throws ApiException {
         String action = (start ? "start" : "stop");
-        return sendAction(WCSERVICE_CLIMATISATION, action, "");
+        return sendAction(WCSERVICE_CLIMATISATION, action);
     }
 
     @Override
@@ -165,9 +161,9 @@ public class WeConnectApi extends ApiWithOAuth implements BrandAuthenticator {
         try {
             WCVehicleStatusData status = getWCStatus();
 
-            Double tempK = SIUnits.CELSIUS.getConverterToAny(Units.KELVIN).convert(tempC);
             status.climatisation.climatisationSettings.value.targetTemperature_C = tempC;
-            status.climatisation.climatisationSettings.value.targetTemperature_K = tempK;
+            status.climatisation.climatisationSettings.value.targetTemperature_K = SIUnits.CELSIUS
+                    .getConverterToAny(Units.KELVIN).convert(tempC);
             String payload = gson.toJson(status.climatisation.climatisationSettings.value);
             payload = payload.replaceAll("\"carCapturedTimestamp\".*,", payload);
             return sendSettings(WCSERVICE_CLIMATISATION, payload);
@@ -188,7 +184,7 @@ public class WeConnectApi extends ApiWithOAuth implements BrandAuthenticator {
     @Override
     public String controlCharger(boolean start) throws ApiException {
         String action = (start ? "start" : "stop");
-        return sendAction(WCSERVICE_CHARGING, action, "");
+        return sendAction(WCSERVICE_CHARGING, action);
     }
 
     @Override
@@ -209,28 +205,28 @@ public class WeConnectApi extends ApiWithOAuth implements BrandAuthenticator {
         return sendSettings(WCSERVICE_CHARGING, payload);
     }
 
-    private boolean hasCapability(ArrayList<WCCapability> capabilities, String capability) {
+    private boolean hasCapabilityParkingPosition(ArrayList<WCCapability> capabilities) {
         for (WCCapability cap : capabilities) {
-            if (capability.equals(cap.id)) {
+            if (WCCAPABILITY_PARKINGPOS.equals(cap.id)) {
                 return true;
             }
         }
         return false;
     }
 
-    private String sendAction(String service, String action, String body) throws ApiException {
-        ApiHttpMap headers = crerateParameters();
-        String json = http.post("vehicles/{2}/" + service + "/" + action, headers.getHeaders(), body).response;
+    private String sendAction(String service, String action) throws ApiException {
+        ApiHttpMap headers = createParameters();
+        http.post("vehicles/{2}/" + service + "/" + action, headers.getHeaders(), "");
         return API_REQUEST_STARTED;
     }
 
     private String sendSettings(String service, String body) throws ApiException {
-        ApiHttpMap headers = crerateParameters();
-        String json = http.put("vehicles/{2}/" + service + "/settings", headers.getHeaders(), body).response;
+        ApiHttpMap headers = createParameters();
+        http.put("vehicles/{2}/" + service + "/settings", headers.getHeaders(), body);
         return API_REQUEST_STARTED;
     }
 
-    private ApiHttpMap crerateParameters() throws ApiException {
+    private ApiHttpMap createParameters() throws ApiException {
         /*
          * accept: "* / *",
          * "content-type": "application/json",

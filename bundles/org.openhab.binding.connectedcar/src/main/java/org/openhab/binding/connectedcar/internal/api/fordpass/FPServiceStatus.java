@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link FPServiceStatus} implements the Status Service for Skoda Enyak.
+ * The {@link FPServiceStatus} implements the Status Service for Škoda Enyak.
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -69,8 +69,8 @@ public class FPServiceStatus extends ApiBaseService {
                 CHANNEL_STATUS_ODOMETER, CHANNEL_STATUS_SWUPDATE, CHANNEL_STATUS_DEEPSLEEP);
 
         // Location
-        addChannels(channels, status.gps != null, CHANNEL_LOCATTION_GEO, CHANNEL_LOCATTION_ADDRESS,
-                CHANNEL_LOCATTION_TIME);
+        addChannels(channels, status.gps != null, CHANNEL_LOCATION_GEO, CHANNEL_LOCATION_ADDRESS,
+                CHANNEL_LOCATION_TIME);
 
         // Range
         addChannels(channels, true, CHANNEL_RANGE_TOTAL, CHANNEL_RANGE_PRANGE, CHANNEL_RANGE_FUEL);
@@ -135,16 +135,16 @@ public class FPServiceStatus extends ApiBaseService {
         boolean updated = false;
         if (status.gps != null) {
             PointType gps = new PointType(getDecimal(status.gps.latitude), getDecimal(status.gps.longitude));
-            updated |= updateChannel(CHANNEL_LOCATTION_GEO, gps);
-            updated |= updateChannel(CHANNEL_LOCATTION_TIME, getDateTime(getString(status.gps.timestamp)));
-            updated |= updateLocationAddress(gps, CHANNEL_LOCATTION_ADDRESS);
+            updated |= updateChannel(CHANNEL_LOCATION_GEO, gps);
+            updated |= updateChannel(CHANNEL_LOCATION_TIME, getDateTime(getString(status.gps.timestamp)));
+            updated |= updateLocationAddress(gps, CHANNEL_LOCATION_ADDRESS);
         }
         return updated;
     }
 
     private boolean updateRangeStatus(FPVehicleStatus status) {
         boolean updated = false;
-        // assume primary engine is alway non-electrical
+        // assume primary engine is always non-electrical
         // electrical will be secondary, or primary if electrical-only
         double frange = 0.0, erange = 0.0;
         if (status.fuel != null) {

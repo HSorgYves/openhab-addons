@@ -35,7 +35,7 @@ import org.openhab.binding.connectedcar.internal.api.carnet.BrandCarNetSkoda;
 import org.openhab.binding.connectedcar.internal.handler.ThingHandlerInterface;
 
 /**
- * {@link BrandSkodaE} provides the Brand interface for Skoda Enyak
+ * {@link BrandSkodaE} provides the Brand interface for Škoda Enyak
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -44,7 +44,7 @@ import org.openhab.binding.connectedcar.internal.handler.ThingHandlerInterface;
 @NonNullByDefault
 public class BrandSkodaE extends SkodaEApi implements BrandAuthenticator {
     private final static String API_URL = "https://api.connect.skoda-auto.cz/api";
-    private static ApiBrandProperties properties = new ApiBrandProperties();
+    private static final ApiBrandProperties properties = new ApiBrandProperties();
     static {
         properties.userAgent = "OneConnect/000000023 CFNetwork/978.0.7 Darwin/18.7.0";
         properties.apiDefaultUrl = API_URL;
@@ -69,7 +69,7 @@ public class BrandSkodaE extends SkodaEApi implements BrandAuthenticator {
 
     @Override
     public ApiBrandProperties getProperties() {
-        // Properties for the Skoda-E native API
+        // Properties for the Škoda-E native API
         // required to get the vehicle list
         return properties;
     }
@@ -99,12 +99,11 @@ public class BrandSkodaE extends SkodaEApi implements BrandAuthenticator {
     public String[] getImageUrls() throws ApiException {
         if (config.vstatus.imageUrls.length == 0) {
             try {
-                String idToken = tokenManager.createProfileToken(config);
+                // String idToken = tokenManager.createProfileToken(config);
                 // JwtToken jwt = decodeJwt(idToken);
-                String json = super.callApi("", API_URL + "vehicles/{2}",
-                        fillAppHeaders(tokenManager.createProfileToken(config)), "getImageUrls", String.class);
-            } catch (ApiException e) {
-
+                super.callApi("", API_URL + "vehicles/{2}", fillAppHeaders(tokenManager.createProfileToken(config)),
+                        "getImageUrls", String.class);
+            } catch (ApiException ignored) {
             }
         }
         return config.vstatus.imageUrls;

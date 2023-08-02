@@ -34,7 +34,7 @@ import org.openhab.binding.connectedcar.internal.handler.ThingHandlerInterface;
  */
 @NonNullByDefault
 public class BrandCarNetVW extends CarNetApi implements BrandAuthenticator {
-    private static ApiBrandProperties properties = new ApiBrandProperties();
+    private static final ApiBrandProperties properties = new ApiBrandProperties();
     static {
         properties.brand = API_BRAND_VW;
         properties.xcountry = "DE";

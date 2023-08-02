@@ -75,7 +75,7 @@ public class WeConnectApiJsonDTO {
     }
 
     public static class WCVehicleStatusData {
-        public class WCSingleStatusItem {
+        public static class WCSingleStatusItem {
             /*
              * {
              * "name": "left",
@@ -86,7 +86,7 @@ public class WeConnectApiJsonDTO {
             public String status;
         }
 
-        public class WCMultiStatusItem {
+        public static class WCMultiStatusItem {
             /*
              * {
              * "name": "bonnet",
@@ -100,7 +100,7 @@ public class WeConnectApiJsonDTO {
         }
 
         // public class WCVehicleStatus {
-        public class WCAccessStatus {
+        public static class WCAccessStatus {
 
             public String carCapturedTimestamp;
             public String overallStatus;
@@ -108,7 +108,7 @@ public class WeConnectApiJsonDTO {
             public ArrayList<WCMultiStatusItem> windows;
         }
 
-        public class WCBatteryStatus {
+        public static class WCBatteryStatus {
             /*
              * "batteryStatus": {
              * "carCapturedTimestamp": "2021-06-25T14:01:35Z",
@@ -121,7 +121,7 @@ public class WeConnectApiJsonDTO {
             public Integer cruisingRangeElectric_km;
         }
 
-        public class WCChargingStatus {
+        public static class WCChargingStatus {
             /*
              * "chargingStatus": {
              * "carCapturedTimestamp": "2021-06-25T14:01:35Z",
@@ -140,7 +140,7 @@ public class WeConnectApiJsonDTO {
             public Integer chargeRate_kmph;
         }
 
-        public class WCChargingSettings {
+        public static class WCChargingSettings {
             /*
              * "chargingSettings": {
              * "carCapturedTimestamp": "2021-06-25T23:06:41Z",
@@ -155,7 +155,7 @@ public class WeConnectApiJsonDTO {
             public Integer targetSOC_pct;
         }
 
-        public class WCChargeMode {
+        public static class WCChargeMode {
             /*
              * "chargeMode":{
              * "preferredChargeMode":"manual",
@@ -169,7 +169,7 @@ public class WeConnectApiJsonDTO {
             public ArrayList<String> availableChargeModes;
         }
 
-        public class WCPlugStatus {
+        public static class WCPlugStatus {
             /*
              * "plugStatus": {
              * "carCapturedTimestamp": "2021-06-25T23:06:41Z",
@@ -182,7 +182,7 @@ public class WeConnectApiJsonDTO {
             public String plugLockState;
         }
 
-        public class WCClimatisationStatus {
+        public static class WCClimatisationStatus {
             /*
              * "climatisationStatus": {
              * "carCapturedTimestamp": "2021-06-25T23:06:40Z",
@@ -195,7 +195,7 @@ public class WeConnectApiJsonDTO {
             public String climatisationState;
         }
 
-        public class WCClimatisationSettings {
+        public static class WCClimatisationSettings {
             /*
              * "climatisationSettings": {
              * "carCapturedTimestamp": "2021-06-25T23:06:47Z",
@@ -220,7 +220,7 @@ public class WeConnectApiJsonDTO {
             public String unitInCar;
         }
 
-        public class WCClimatisationTimer {
+        public static class WCClimatisationTimer {
             /*
              * {
              * "id": 1,
@@ -229,8 +229,8 @@ public class WeConnectApiJsonDTO {
              * "startDateTime": "1999-12-31T22:00:00Z"
              * }
              */
-            public class WCClimaTimer {
-                public class WCSingleTimer {
+            public static class WCClimaTimer {
+                public static class WCSingleTimer {
                     public String startDateTime;
                 }
 
@@ -244,7 +244,7 @@ public class WeConnectApiJsonDTO {
             public String timeInCar;
         }
 
-        public class WCWindowHeatingStatus {
+        public static class WCWindowHeatingStatus {
             /*
              * "windowHeatingStatus": {
              * "carCapturedTimestamp": "2021-06-25T14:01:37Z",
@@ -261,7 +261,7 @@ public class WeConnectApiJsonDTO {
              * },
              */
 
-            public class WCHeatingStatus {
+            public static class WCHeatingStatus {
                 public String windowLocation;
                 public String windowHeatingState;
             }
@@ -270,7 +270,7 @@ public class WeConnectApiJsonDTO {
             public ArrayList<WCHeatingStatus> windowHeatingStatus;
         }
 
-        public class WCLightStatus {
+        public static class WCLightStatus {
             /*
              * "lightsStatus": {
              * "carCapturedTimestamp": "2021-09-04T16:59:11Z",
@@ -290,7 +290,7 @@ public class WeConnectApiJsonDTO {
             public ArrayList<WCSingleStatusItem> lights;
         }
 
-        public class WCRangeStatus {
+        public static class WCRangeStatus {
             /*
              * "rangeStatus":
              * {
@@ -304,7 +304,7 @@ public class WeConnectApiJsonDTO {
              * "totalRange_km": 221
              * },
              */
-            public class WCEngine {
+            public static class WCEngine {
                 public String type;
                 public Integer currentSOC_pct;
                 public Integer remainingRange_km;
@@ -317,7 +317,7 @@ public class WeConnectApiJsonDTO {
             public Integer totalRange_km;
         }
 
-        public class WCMaintenanceStatus {
+        public static class WCMaintenanceStatus {
             public String carCapturedTimestamp;
             @SerializedName("inspectionDue_days")
             public Integer inspectionDueDays;
@@ -331,7 +331,7 @@ public class WeConnectApiJsonDTO {
             public Integer oilServiceDueKm;
         }
 
-        public class WCCapabilityStatus {
+        public static class WCCapabilityStatus {
             /*
              * "capabilityStatus":
              * {
@@ -345,69 +345,69 @@ public class WeConnectApiJsonDTO {
             public ArrayList<WCCapability> capabilities;
         }
 
-        public class WCAccessStatusValue {
-            public class WCAccessStatusStatus {
+        public static class WCAccessStatusValue {
+            public static class WCAccessStatusStatus {
                 public WCAccessStatus value;
             }
 
             public WCAccessStatusStatus accessStatus;
         }
 
-        public class WCVehicleLightsValue {
-            public class WCVehicleLightsStatus {
+        public static class WCVehicleLightsValue {
+            public static class WCVehicleLightsStatus {
                 public WCLightStatus value;
             }
 
             public WCVehicleLightsStatus lightsStatus;
         }
 
-        public class WCFuelStatus {
-            public class WCFuelStatusValue {
+        public static class WCFuelStatus {
+            public static class WCFuelStatusValue {
                 public WCRangeStatus value;
             }
 
             public WCFuelStatusValue rangeStatus;
         }
 
-        public class WCUserCapabilities {
-            public class WCCapcabilitiesStatus {
+        public static class WCUserCapabilities {
+            public static class WCCapcabilitiesStatus {
                 public ArrayList<WCCapability> value;
             }
 
             public WCCapcabilitiesStatus capabilitiesStatus;
         }
 
-        public class WCVehicleHealthInspection {
-            public class WCVehicleHealthInspectionStatus {
+        public static class WCVehicleHealthInspection {
+            public static class WCVehicleHealthInspectionStatus {
                 public WCMaintenanceStatus value;
             }
 
             public WCVehicleHealthInspectionStatus maintenanceStatus;
         }
 
-        public class WCCharging {
-            public class WCBatteryStatusValue {
+        public static class WCCharging {
+            public static class WCBatteryStatusValue {
                 public WCBatteryStatus value;
             }
 
-            public class WCChargeModeStatus {
+            public static class WCChargeModeStatus {
                 public WCChargeMode value;
             }
 
-            public class WCChargingSettingsValue {
+            public static class WCChargingSettingsValue {
                 WCChargingSettings value;
             }
 
-            public class WCChargingStatusValue {
+            public static class WCChargingStatusValue {
                 public WCChargingStatus value;
             }
 
-            public class WCPlugStatusValue {
+            public static class WCPlugStatusValue {
                 public WCPlugStatus value;
             }
 
-            public class WCChargingCareSettingsValue {
-                public class WCChargingCareSettings {
+            public static class WCChargingCareSettingsValue {
+                public static class WCChargingCareSettings {
                     /*
                      * "batteryCareMode": "activated"
                      */
@@ -425,20 +425,20 @@ public class WeConnectApiJsonDTO {
             public WCPlugStatusValue plugStatus;
         }
 
-        public class WCClimatistation {
-            public class WCClimatisationSettingsValue {
+        public static class WCClimatistation {
+            public static class WCClimatisationSettingsValue {
                 public WCClimatisationSettings value;
             }
 
-            public class WCClimatisationStatusValue {
+            public static class WCClimatisationStatusValue {
                 public WCClimatisationStatus value;
             }
 
-            public class WCClimatisationTimerValue {
+            public static class WCClimatisationTimerValue {
                 public WCClimatisationTimer value;
             }
 
-            public class WCWindowHeatingStatusValue {
+            public static class WCWindowHeatingStatusValue {
                 public WCWindowHeatingStatus value;
             }
 
@@ -448,7 +448,7 @@ public class WeConnectApiJsonDTO {
             public WCWindowHeatingStatusValue windowHeatingStatus;
         }
 
-        public class WCMeasurementsRangeStatus {
+        public static class WCMeasurementsRangeStatus {
             /*
              * ID.3 Pro Performance:
              * "electricRange": 166
@@ -470,7 +470,7 @@ public class WeConnectApiJsonDTO {
             public Integer gasolineRange;
         }
 
-        public class WCMeasurementsOdometerStatus {
+        public static class WCMeasurementsOdometerStatus {
             /*
              * ID.3 Pro Performance:
              * "odometer": 6848
@@ -485,12 +485,12 @@ public class WeConnectApiJsonDTO {
             public Integer odometer;
         }
 
-        public class WCMeasurements {
-            public class WCMeasurementsRangeStatusValue {
+        public static class WCMeasurements {
+            public static class WCMeasurementsRangeStatusValue {
                 public WCMeasurementsRangeStatus value;
             }
 
-            public class WCMeasurementsOdometerStatusValue {
+            public static class WCMeasurementsOdometerStatusValue {
                 public WCMeasurementsOdometerStatus value;
             }
 
@@ -498,12 +498,12 @@ public class WeConnectApiJsonDTO {
             public WCMeasurementsOdometerStatusValue odometerStatus;
         }
 
-        public class WCOilLevelStatus {
+        public static class WCOilLevelStatus {
             public Boolean value;
         }
 
-        public class WCOilLevel {
-            public class WCOilLevelStatusValue {
+        public static class WCOilLevel {
+            public static class WCOilLevelStatusValue {
                 public WCOilLevelStatus value;
             }
 
@@ -522,7 +522,7 @@ public class WeConnectApiJsonDTO {
     }
 
     public static class WCActionResponse {
-        public class WCApiError {
+        public static class WCApiError {
             /*
              * "error": {
              * "code": 2105,
@@ -532,7 +532,7 @@ public class WeConnectApiJsonDTO {
              * "retry": true
              * }
              */
-            public class WCApiErrorDetails {
+            public static class WCApiErrorDetails {
                 public Integer code;
                 public String message;
                 public Integer group;
@@ -543,7 +543,7 @@ public class WeConnectApiJsonDTO {
             public WCApiErrorDetails error;
         }
 
-        public class WCApiError2 {
+        public static class WCApiError2 {
             public String uri;
             public String status;
             public String message;
@@ -556,7 +556,7 @@ public class WeConnectApiJsonDTO {
          * }
          * }
          */
-        public class WCActionResponseData {
+        public static class WCActionResponseData {
             public String requestID;
         }
 
@@ -564,7 +564,7 @@ public class WeConnectApiJsonDTO {
         public WCApiError error;
     }
 
-    public class WCParkingPosition {
+    public static class WCParkingPosition {
         /*
          * {
          * "data": {
@@ -574,7 +574,7 @@ public class WeConnectApiJsonDTO {
          * }
          * }
          */
-        public class WeConnectParkingPosition {
+        public static class WeConnectParkingPosition {
             public String carCapturedTimestamp;
             public String lon, lat;
         }

@@ -64,12 +64,7 @@ public class CarNetServiceGeoFenceAlerts extends ApiBaseService {
         if (gfa.geofencingAlert == null) {
             return false;
         }
-        Collections.sort(gfa.geofencingAlert, Collections.reverseOrder(new Comparator<CarNetGeoFenceAlertEntry>() {
-            @Override
-            public int compare(CarNetGeoFenceAlertEntry a, CarNetGeoFenceAlertEntry b) {
-                return a.occurenceDateTime.compareTo(b.occurenceDateTime);
-            }
-        }));
+        gfa.geofencingAlert.sort(Collections.reverseOrder(Comparator.comparing(a -> a.occurenceDateTime)));
 
         boolean updated = false;
         int i = 0; // latest first

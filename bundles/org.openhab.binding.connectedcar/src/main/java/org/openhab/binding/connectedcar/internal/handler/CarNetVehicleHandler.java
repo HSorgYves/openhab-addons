@@ -82,7 +82,7 @@ public class CarNetVehicleHandler extends ThingBaseHandler {
         boolean processed = true;
         String action = "";
         String actionStatus = "";
-        boolean switchOn = (command instanceof OnOffType) && (OnOffType) command == OnOffType.ON;
+        boolean switchOn = command == OnOffType.ON;
         try {
             switch (channelId) {
                 case CHANNEL_CONTROL_LOCK:
@@ -131,9 +131,9 @@ public class CarNetVehicleHandler extends ThingBaseHandler {
                 case CHANNEL_CONTROL_FLASH:
                 case CHANNEL_CONTROL_HONKFLASH:
                     if (command == OnOffType.ON) {
-                        State point = cache.getValue(mkChannelId(CHANNEL_GROUP_LOCATION, CHANNEL_LOCATTION_GEO));
+                        State point = cache.getValue(mkChannelId(CHANNEL_GROUP_LOCATION, CHANNEL_LOCATION_GEO));
                         if (point != UnDefType.NULL) {
-                            action = CHANNEL_CONTROL_FLASH == channelId ? "flash" : "honk";
+                            action = CHANNEL_CONTROL_FLASH.equals(channelId) ? "flash" : "honk";
                             actionStatus = api.controlHonkFlash(CHANNEL_CONTROL_HONKFLASH.equals(channelId),
                                     (PointType) point, getHfDuration());
                         } else {

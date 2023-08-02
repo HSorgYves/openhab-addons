@@ -61,7 +61,7 @@ public class ApiBase extends ApiRequestQueue implements ApiBrandInterface, Brand
     protected IdentityManager tokenManager = new IdentityManager();
     protected @Nullable ApiEventListener eventListener;
 
-    protected boolean initialzed = false;
+    protected boolean initialised = false;
 
     public ApiBase() {
     }
@@ -79,7 +79,7 @@ public class ApiBase extends ApiRequestQueue implements ApiBrandInterface, Brand
     public void initialize(CombinedConfig configIn) throws ApiException {
         setConfig(configIn); // derive from account config
         thingId = config.account.brand;
-        initialzed = tokenManager.refreshTokens(config);
+        initialised = tokenManager.refreshTokens(config);
     }
 
     /**
@@ -89,7 +89,6 @@ public class ApiBase extends ApiRequestQueue implements ApiBrandInterface, Brand
      * @param vin Vehicle ID (VIN)
      * @param configIn Combined config, which gets updated and will be returned
      * @return Updated config
-     * @throws ApiException
      */
     @Override
     public CombinedConfig initialize(String vin, CombinedConfig configIn) throws ApiException {
@@ -101,7 +100,7 @@ public class ApiBase extends ApiRequestQueue implements ApiBrandInterface, Brand
 
     @Override
     public boolean isInitialized() {
-        return initialzed;
+        return initialised;
     }
 
     @Override
@@ -180,7 +179,7 @@ public class ApiBase extends ApiRequestQueue implements ApiBrandInterface, Brand
             }
         } catch (RuntimeException e) {
             logger.debug("{}: API call {} failed", config.vehicle.vin, function, e);
-            throw new ApiException("API call failes: RuntimeException", e);
+            throw new ApiException("API call fails: RuntimeException", e);
         }
     }
 
@@ -197,7 +196,7 @@ public class ApiBase extends ApiRequestQueue implements ApiBrandInterface, Brand
             return null;
         }
         try {
-            StringBuffer result = new StringBuffer();
+            StringBuilder result = new StringBuilder();
             String path = System.getProperty("user.dir") + "/userdata/";
             File myObj = new File(path + filename + ".json");
             Scanner myReader = new Scanner(myObj);
@@ -207,7 +206,7 @@ public class ApiBase extends ApiRequestQueue implements ApiBrandInterface, Brand
             }
             myReader.close();
             return result.toString();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
         return null;
     }
@@ -383,7 +382,7 @@ public class ApiBase extends ApiRequestQueue implements ApiBrandInterface, Brand
         return UNSUPPORTED;
     }
 
-    public String getHomeReguionUrl() {
+    public String getHomeRegionUrl() {
         return "";
     }
 
@@ -402,7 +401,7 @@ public class ApiBase extends ApiRequestQueue implements ApiBrandInterface, Brand
         return oauth; // default: no modification
     }
 
-    public String getVehicleRequets() throws ApiException {
+    public String getVehicleRequests() throws ApiException {
         return "";
     }
 

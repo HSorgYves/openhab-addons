@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -62,9 +63,9 @@ public class ApiWithOAuth extends ApiBase implements BrandAuthenticator {
                 + "&scope=" + urlEncode(config.api.authScope).replace("%20", "+") //
                 + "&response_type=" + urlEncode(config.api.responseType).replace("%20", "+") //
                 + "&redirect_uri=" + urlEncode(config.api.redirect_uri) //
-                + "&nonce=" + generateNonce() + "&state=" + UUID.randomUUID().toString();
+                + "&nonce=" + generateNonce() + "&state=" + UUID.randomUUID();
         if (config.authenticator != null) {
-            url = config.authenticator.updateAuthorizationUrl(url);
+            url = Objects.requireNonNull(config.authenticator).updateAuthorizationUrl(url);
         }
         return oauth.addCodeChallenge(url);
     }
@@ -95,7 +96,7 @@ public class ApiWithOAuth extends ApiBase implements BrandAuthenticator {
             oauth.clearData().data("_csrf", oauth.csrf).data("relayState", oauth.relayState).data("hmac", oauth.hmac)
                     .data(config.api.authUserAttr, URLEncoder.encode(config.account.user, UTF_8));
             if (config.authenticator != null) {
-                config.authenticator.updateSigninParameters(oauth);
+                Objects.requireNonNull(config.authenticator).updateSigninParameters(oauth);
             }
             oauth.post(url, false);
             if (oauth.location.isEmpty()) {
@@ -105,9 +106,9 @@ public class ApiWithOAuth extends ApiBase implements BrandAuthenticator {
 
             // Authenticate: Password
             logger.trace("{}: OAuth: Input password", logId);
-            url = config.api.issuerRegionMappingUrl + oauth.location; // Signin URL
+            url = config.api.issuerRegionMappingUrl + oauth.location; // Sign-in URL
             String authUrl = url.split("\\?")[0];
-            res = oauth.get(url);
+            oauth.get(url);
 
             logger.trace("{}: OAuth: Authenticate", logId);
             url = authUrl;
@@ -135,7 +136,7 @@ public class ApiWithOAuth extends ApiBase implements BrandAuthenticator {
                 }
             }
 
-            // Check for required consent, do not respond automatically, this has to be done by the user with regards to
+            // Check for required consent, do not respond automatically, this has to be done by the user with regard to
             // data protection
             if (oauth.idToken.isEmpty() && oauth.code.isEmpty()) {
                 if (res.response.contains("Allow access")) // additional consent required

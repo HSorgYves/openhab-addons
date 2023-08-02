@@ -21,8 +21,8 @@ import org.openhab.binding.connectedcar.internal.config.CombinedConfig;
 import org.openhab.core.library.types.PointType;
 
 /**
- * The {@link ApiBrandInterface} defines the internal API interface, which then gets adapted to the varios Connected Car
- * APIs
+ * The {@link ApiBrandInterface} defines the internal API interface, which then gets adapted to the various Connected
+ * Car APIs
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -48,7 +48,7 @@ public interface ApiBrandInterface {
 
     boolean refreshTokens() throws ApiException;
 
-    public ArrayList<String> getVehicles() throws ApiException;
+    ArrayList<String> getVehicles() throws ApiException;
 
     VehicleDetails getVehicleDetails(String vin) throws ApiException;
 

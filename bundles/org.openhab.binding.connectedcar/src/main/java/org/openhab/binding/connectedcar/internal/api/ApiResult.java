@@ -57,7 +57,7 @@ public class ApiResult {
         this.url = url;
     }
 
-    public ApiResult(String url, String method, Integer responseCode, String response) {
+    public ApiResult(String url, String method, String response) {
         this(method, url);
         this.response = response;
     }
@@ -68,7 +68,7 @@ public class ApiResult {
 
     public ApiResult(@Nullable ContentResponse contentResponse, Throwable e) {
         fillFromResponse(contentResponse);
-        response = response + "(" + e.toString() + ")";
+        response = response + "(" + e + ")";
     }
 
     public ApiResult(@Nullable Request request, Throwable e) {

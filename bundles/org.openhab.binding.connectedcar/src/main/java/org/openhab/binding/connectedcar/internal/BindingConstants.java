@@ -12,10 +12,7 @@
  */
 package org.openhab.binding.connectedcar.internal;
 
-import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.measure.Unit;
 import javax.measure.quantity.Dimensionless;
@@ -65,17 +62,14 @@ public class BindingConstants {
 
     public static final ThingTypeUID THING_TYPE_CNVEHICLE = new ThingTypeUID(BINDING_ID, "cnvehicle");
     public static final ThingTypeUID THING_TYPE_IDVEHICLE = new ThingTypeUID(BINDING_ID, "idvehicle");
-    public static final ThingTypeUID THING_TYPE_GOPLUG = new ThingTypeUID(BINDING_ID, "goplug");
     public static final ThingTypeUID THING_TYPE_WCWALLBOX = new ThingTypeUID(BINDING_ID, "wcwallbox");
     public static final ThingTypeUID THING_TYPE_SKODAEVEHICLE = new ThingTypeUID(BINDING_ID, "sevehicle");
     public static final ThingTypeUID THING_TYPE_FORDVEHICLE = new ThingTypeUID(BINDING_ID, "fordvehicle");
-    public static final ThingTypeUID THING_TYPE_MMEVEHICLE = new ThingTypeUID(BINDING_ID, "mmevehicle");
 
-    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections
-            .unmodifiableSet(Stream.of(THING_TYPE_MYAUDI, THING_TYPE_VW, THING_TYPE_SKODA, THING_TYPE_SEAT,
-                    THING_TYPE_CNVEHICLE, THING_TYPE_ENYAK, THING_TYPE_SKODAEVEHICLE, THING_TYPE_FORD,
-                    THING_TYPE_FORDVEHICLE, THING_TYPE_VWID, THING_TYPE_IDVEHICLE, THING_TYPE_MMEVEHICLE,
-                    THING_TYPE_WECHARGE, THING_TYPE_WCWALLBOX).collect(Collectors.toSet()));
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Set.of(THING_TYPE_MYAUDI, THING_TYPE_VW,
+            THING_TYPE_SKODA, THING_TYPE_SEAT, THING_TYPE_CNVEHICLE, THING_TYPE_ENYAK, THING_TYPE_SKODAEVEHICLE,
+            THING_TYPE_FORD, THING_TYPE_FORDVEHICLE, THING_TYPE_VWID, THING_TYPE_IDVEHICLE, THING_TYPE_WECHARGE,
+            THING_TYPE_WCWALLBOX);
 
     // List of all ChannelGroups and Channels
     public static final String CHANNEL_GROUP_GENERAL = "general";
@@ -123,9 +117,9 @@ public class BindingConstants {
     public static final String CHANNEL_CONTROL_HFDURATION = "hfDuration";
 
     public static final String CHANNEL_GROUP_LOCATION = "location";
-    public static final String CHANNEL_LOCATTION_GEO = "locationPosition";
-    public static final String CHANNEL_LOCATTION_ADDRESS = "locationAddress";
-    public static final String CHANNEL_LOCATTION_TIME = "locationLastUpdate";
+    public static final String CHANNEL_LOCATION_GEO = "locationPosition";
+    public static final String CHANNEL_LOCATION_ADDRESS = "locationAddress";
+    public static final String CHANNEL_LOCATION_TIME = "locationLastUpdate";
     public static final String CHANNEL_PARK_LOCATION = "parkingPosition";
     public static final String CHANNEL_PARK_ADDRESS = "parkingAddress";
     public static final String CHANNEL_PARK_TIME = "parkingTime";
@@ -140,7 +134,7 @@ public class BindingConstants {
     public static final String CHANNEL_RANGE_PRANGE = "primaryRange";
     public static final String CHANNEL_RANGE_SRANGE = "secondaryRange";
 
-    // Group Climarter
+    // Group Climater
     public static final String CHANNEL_GROUP_CLIMATER = "climater";
     public static final String CHANNEL_CLIMATER_GEN_STATE = "climatisationState";
     public static final String CHANNEL_CLIMATER_HEATSOURCE = "heaterSource";
@@ -188,7 +182,7 @@ public class BindingConstants {
     public static final String CHANNEL_DEST_NAME = "destinationName";
     public static final String CHANNEL_DEST_POI = "destinationPoi";
     public static final String CHANNEL_DEST_GEO = "destinationLocation";
-    public static final String CHANNEL_DEST_STREET = "destinatinStreet";
+    public static final String CHANNEL_DEST_STREET = "destinationStreet";
     public static final String CHANNEL_DEST_CITY = "destinationCity";
     public static final String CHANNEL_DEST_ZIP = "destinationZip";
     public static final String CHANNEL_DEST_COUNTY = "destinationCountry";
@@ -283,7 +277,7 @@ public class BindingConstants {
     public static final String CHANNEL_RFID_PUBLIC = "rfidPublicCharging";
     public static final String CHANNEL_RFID_UPDATE = "rfidLastUpdated";
 
-    // CHarging transactions
+    // Charging transactions
     public static final String CHANNEL_CHANNEL_GROUP_TRANSACTIONS = "transaction";
     public static final String CHANNEL_TRANS_ID = "transId";
     public static final String CHANNEL_TRANS_PUBLIC = "transPublic";

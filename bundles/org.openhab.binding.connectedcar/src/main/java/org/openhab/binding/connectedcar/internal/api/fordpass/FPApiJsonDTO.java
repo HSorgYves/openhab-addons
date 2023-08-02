@@ -34,9 +34,9 @@ public class FPApiJsonDTO {
     public final static String FPSERVICE_CLIMATISATION = "climatisation";
     public final static String FPSERVICE_CHARGER = "charger";
 
-    public class FPErrorResponse {
-        public class FPErrorMessage {
-            public class FPErrorDetails {
+    public static class FPErrorResponse {
+        public static class FPErrorMessage {
+            public static class FPErrorDetails {
                 public String statusContext;
                 public String statusCode;
                 public String message;
@@ -53,8 +53,8 @@ public class FPApiJsonDTO {
     }
 
     public static class FPVehicleListData {
-        public class FPVehicleData {
-            public class FPVehicle {
+        public static class FPVehicleData {
+            public static class FPVehicle {
                 public String vin, nickName, vehicleType, color;
                 public String modelName, modelCode, modelYear, make;
                 public Integer tcuEnabled;
@@ -71,33 +71,33 @@ public class FPApiJsonDTO {
         public String version;
     }
 
-    public class FPVehicleStatusData {
-        public class FPVehicleStatus {
-            public class FPStatusStringValue {
+    public static class FPVehicleStatusData {
+        public static class FPVehicleStatus {
+            public static class FPStatusStringValue {
                 public String value;
                 public String status;
                 public String timestamp;
             }
 
-            public class FPStatusIntValue {
+            public static class FPStatusIntValue {
                 public Integer value;
                 public String status;
                 public String timestamp;
             }
 
-            public class FPStatusDoubleValue {
+            public static class FPStatusDoubleValue {
                 public Double value;
                 public String status;
                 public String timestamp;
             }
 
-            public class FPStatusBooleanValue {
+            public static class FPStatusBooleanValue {
                 public Boolean value;
                 public String status;
                 public String timestamp;
             }
 
-            public class FPStatusGPS {
+            public static class FPStatusGPS {
                 /*
                  * "latitude":"26.9543817",
                  * "longitude":"-82.3306200",
@@ -112,7 +112,7 @@ public class FPApiJsonDTO {
                 public String timestamp;
             }
 
-            public class FPStatusRemoteStart {
+            public static class FPStatusRemoteStart {
                 /*
                  * "remoteStartDuration":0,
                  * "remoteStartTime":0,
@@ -125,7 +125,7 @@ public class FPApiJsonDTO {
                 public String timestamp;
             }
 
-            public class FPStatusBattery {
+            public static class FPStatusBattery {
                 /*
                  * "batteryHealth":{
                  * "value":"STATUS_GOOD",
@@ -138,12 +138,12 @@ public class FPApiJsonDTO {
                  * }
                  */
 
-                public class FPStatusBatHealth {
+                public static class FPStatusBatHealth {
                     public String value;
                     public String timestamp;
                 }
 
-                public class FPStatusBatActual {
+                public static class FPStatusBatActual {
                     public Integer value;
                     public String status;
                     public String timestamp;
@@ -153,14 +153,14 @@ public class FPApiJsonDTO {
                 public FPStatusBatActual batteryStatusActual;
             }
 
-            public class FPStatusFuel {
+            public static class FPStatusFuel {
                 public Double fuelLevel;
                 public Double distanceToEmpty;
                 public String status;
                 public String timestamp;
             }
 
-            public class FPStatusOil {
+            public static class FPStatusOil {
                 /*
                  * "oilLife":"STATUS_GOOD",
                  * "oilLifeActual":98,
@@ -173,7 +173,7 @@ public class FPApiJsonDTO {
                 public String timestamp;
             }
 
-            public class FPStatusTirePres {
+            public static class FPStatusTirePres {
                 /*
                  * "value":"STATUS_GOOD",
                  * "timestamp":"07-29-2021 01:03:21"
@@ -182,7 +182,7 @@ public class FPApiJsonDTO {
                 public String timestamp;
             }
 
-            public class FPTpms {
+            public static class FPTpms {
                 FPStatusDoubleValue tirePressureByLocation;
                 FPStatusStringValue tirePressureSystemStatus;
                 FPStatusDoubleValue dualRearWheel;
@@ -201,7 +201,7 @@ public class FPApiJsonDTO {
                 FPStatusStringValue recommendedRearTirePressure;
             }
 
-            public class FPCssSettings {
+            public static class FPCssSettings {
                 public String timestamp;
                 public Integer location;
                 public Integer vehicleConnectivity;
@@ -210,14 +210,14 @@ public class FPApiJsonDTO {
                 public Integer contacts;
             }
 
-            public class FPWindowPosition {
+            public static class FPWindowPosition {
                 FPStatusStringValue driverWindowPosition;
                 FPStatusStringValue passWindowPosition;
                 FPStatusStringValue rearDriverWindowPos;
                 FPStatusStringValue rearPassWindowPos;
             }
 
-            public class FPDoorStatus {
+            public static class FPDoorStatus {
                 FPStatusStringValue rightRearDoor;
                 FPStatusStringValue leftRearDoor;
                 FPStatusStringValue driverDoor;
@@ -227,7 +227,7 @@ public class FPApiJsonDTO {
                 FPStatusStringValue innerTailgateDoor;
             }
 
-            public class FPDieselSystemStatus {
+            public static class FPDieselSystemStatus {
                 /*
                  * Formats for those are missing, to be added
                  * "exhaustFluidLevel":null,
@@ -292,13 +292,13 @@ public class FPApiJsonDTO {
 
     public static class FPActionRequest extends ApiActionRequest {
         public FPActionRequest(String service, String action, FPActionResponse rsp) {
-            // normalize the resonse type
+            // normalize the response type
             this.service = service;
             this.action = action;
             this.requestId = rsp.commandId;
         }
 
-        public class FPActionResponse {
+        public static class FPActionResponse {
             /*
              * {
              * "$id":"1",

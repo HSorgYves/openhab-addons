@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * {@link SEApiJsonDTO} defines the Skoda-E data formats
+ * {@link SEApiJsonDTO} defines the Škoda-E data formats
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -36,17 +36,17 @@ public class SEApiJsonDTO {
 
     public static class SEVehicleList {
         public static class SEVehicle {
-            public class SEVehicleSpec {
-                public class SEBatterySpec {
+            public static class SEVehicleSpec {
+                public static class SEBatterySpec {
                     public Integer capacityInKWh;
                 }
 
-                public class SEEngine {
+                public static class SEEngine {
                     public String type;
                     public Integer powerInKW;
                 }
 
-                public class SEGearBox {
+                public static class SEGearBox {
                     public String type;
                 }
 
@@ -65,9 +65,9 @@ public class SEApiJsonDTO {
                 public Integer maxChargingPowerInKW;
             }
 
-            public class SEConnectivities {
-                public class SEConnDetail {
-                    public class SEConnRemote {
+            public static class SEConnectivities {
+                public static class SEConnDetail {
+                    public static class SEConnRemote {
                         public String state;
                     }
 
@@ -78,7 +78,7 @@ public class SEApiJsonDTO {
                 public SEConnDetail detail;
             }
 
-            public class SECapabilities {
+            public static class SECapabilities {
                 public String id;
                 public String serviceExpiration;
                 public String[] statuses;
@@ -126,7 +126,7 @@ public class SEApiJsonDTO {
              * }
              * }
              */
-            public class SEClimaZoneSettings {
+            public static class SEClimaZoneSettings {
                 public Boolean frontLeftEnabled;
                 public Boolean frontRightEnabled;
             }
@@ -189,11 +189,11 @@ public class SEApiJsonDTO {
                  * }
                  * }
                  */
-                public class SEHeatingSupport {
+                public static class SEHeatingSupport {
                     public Boolean frontLeftAvailable, frontRightAvailable, rearLeftAvailable, rearRightAvailable;
                 }
 
-                public class SEHeatingStatus {
+                public static class SEHeatingStatus {
                     public String windowLocation;
                     public String state;
                 }

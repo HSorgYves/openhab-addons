@@ -84,7 +84,7 @@ public class CarNetServiceStatus extends ApiBaseService {
                         if ((definition.symbolicName.startsWith("STATE2_")
                                 || definition.symbolicName.startsWith("STATE3_")
                                 || definition.symbolicName.startsWith("LOCK_")) && field.value.equals("0")) {
-                            // Data is reported, but equippment is not available, e.g. convertable top
+                            // Data is reported, but equipment is not available, e.g. convertable top
                             logger.debug("{}: Data point not available, removing channel {}", thingId,
                                     definition.channelName);
                             definition.disabled = true;
@@ -100,8 +100,7 @@ public class CarNetServiceStatus extends ApiBaseService {
                         logger.debug("{}: Unknown data field {}.{}, value={}{}", thingId, data.id, field.id,
                                 field.value, getString(field.unit));
                     }
-                } catch (RuntimeException e) {
-
+                } catch (RuntimeException ignored) {
                 }
             }
         }
@@ -137,7 +136,7 @@ public class CarNetServiceStatus extends ApiBaseService {
                         Channel channel = thingHandler.getThing()
                                 .getChannel(definition.groupName + "#" + definition.channelName);
                         if (channel != null) {
-                            logger.debug("Updading channel {} with value {}", channel.getUID(), getString(field.value));
+                            logger.debug("Updating channel {} with value {}", channel.getUID(), getString(field.value));
                             switch (definition.itemType) {
                                 case ITEMT_SWITCH:
                                 case ITEMT_CONTACT:
@@ -184,12 +183,12 @@ public class CarNetServiceStatus extends ApiBaseService {
     private boolean checkMaintenance(CNStatusField field, ChannelIdMapEntry definition) {
         if (definition.symbolicName.contains("MAINT_")) {
             if (definition.symbolicName.contains("ALARM_") && "1".equals(field.value)) {
-                // MAINT_ALARM_INSPECTION+MAINT_ALARM_OIL_CHANGE + MAINT_ALARM_OIL_MINIMUM
+                // MAINT_ALARM_INSPECTION + MAINT_ALARM_OIL_CHANGE + MAINT_ALARM_OIL_MINIMUM
                 logger.debug("{}: Maintenance required: Alarm {} was detected", thingId, definition.symbolicName);
                 return true;
             } else if (definition.symbolicName.contains("DISTANCE_")
                     && Math.abs(Double.parseDouble(field.value)) < 1000.0) {
-                // MAINT_DISTANCE_INSPECTION | MAINT_OIL_DISTANCE_CHANGE MAINT_| AD_BLUE_DISTANCE
+                // MAINT_DISTANCE_INSPECTION | MAINT_OIL_DISTANCE_CHANGE | MAINT_AD_BLUE_DISTANCE
                 logger.debug("{}: Maintenance required: Remaining distance for {} is {}km, therefore < 1.000km",
                         thingId, definition.symbolicName, field.value);
                 return true;
@@ -203,7 +202,7 @@ public class CarNetServiceStatus extends ApiBaseService {
             boolean result = (definition.symbolicName.contains("LOCK2") && "2".equals(field.value))
                     || (definition.symbolicName.contains("LOCK3") && "3".equals(field.value));
             if (!result) {
-                logger.debug("{}: Vehicle is not completetly locked: {}={}", thingId, definition.channelName,
+                logger.debug("{}: Vehicle is not completely locked: {}={}", thingId, definition.channelName,
                         field.value);
                 return false;
             }
@@ -235,7 +234,7 @@ public class CarNetServiceStatus extends ApiBaseService {
         if (!val.isEmpty() && isNumeric(val)) {
             double value = Double.parseDouble(val);
             if (value < 0) {
-                value = definition.symbolicName.startsWith("GT0") ? 0 : value * -1.0; // no egative values
+                value = definition.symbolicName.startsWith("GT0") ? 0 : value * -1.0; // no negative values
             }
             BigDecimal bd = new BigDecimal(value);
             if (definition.unit != null) {
@@ -245,7 +244,7 @@ public class CarNetServiceStatus extends ApiBaseService {
                 if ((fromUnit != null) && (toUnit != null) && !fromUnit.equals(toUnit)) {
                     try {
                         // Convert between units
-                        bd = new BigDecimal(fromUnit.getConverterToAny(toUnit).convert(value));
+                        bd = BigDecimal.valueOf(fromUnit.getConverterToAny(toUnit).convert(value));
                     } catch (UnconvertibleException | IncommensurableException e) {
                         logger.debug("{}: Unable to covert value", thingId, e);
                     }
@@ -282,8 +281,6 @@ public class CarNetServiceStatus extends ApiBaseService {
                 } else {
                     on = value == 1;
                 }
-            } else if (value == 0) {
-                on = value == 1;
             }
 
             state = ITEMT_SWITCH.equals(definition.itemType) ? (on ? OnOffType.ON : OnOffType.OFF)

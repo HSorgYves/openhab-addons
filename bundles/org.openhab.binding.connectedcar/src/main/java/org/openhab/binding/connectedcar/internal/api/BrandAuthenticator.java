@@ -24,15 +24,15 @@ import org.openhab.binding.connectedcar.internal.api.ApiIdentity.OAuthToken;
  */
 @NonNullByDefault
 public interface BrandAuthenticator {
-    public String getLoginUrl(IdentityOAuthFlow oauth) throws ApiException;
+    String getLoginUrl(IdentityOAuthFlow oauth) throws ApiException;
 
-    public ApiIdentity login(String loginUrl, IdentityOAuthFlow oauth) throws ApiException;
+    ApiIdentity login(String loginUrl, IdentityOAuthFlow oauth) throws ApiException;
 
-    public String updateAuthorizationUrl(String url) throws ApiException;
+    String updateAuthorizationUrl(String url) throws ApiException;
 
-    public IdentityOAuthFlow updateSigninParameters(IdentityOAuthFlow oauth) throws ApiException;
+    IdentityOAuthFlow updateSigninParameters(IdentityOAuthFlow oauth) throws ApiException;
 
-    public ApiIdentity grantAccess(IdentityOAuthFlow oauth) throws ApiException;
+    ApiIdentity grantAccess(IdentityOAuthFlow oauth) throws ApiException;
 
-    public OAuthToken refreshToken(ApiIdentity token) throws ApiException;
+    OAuthToken refreshToken(ApiIdentity token) throws ApiException;
 }

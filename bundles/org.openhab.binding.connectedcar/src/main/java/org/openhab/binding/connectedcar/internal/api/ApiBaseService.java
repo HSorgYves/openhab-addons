@@ -22,7 +22,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.http.HttpStatus;
 import org.openhab.binding.connectedcar.internal.config.CombinedConfig;
-import org.openhab.binding.connectedcar.internal.handler.AccountHandler;
 import org.openhab.binding.connectedcar.internal.handler.ThingBaseHandler;
 import org.openhab.binding.connectedcar.internal.provider.ChannelDefinitions;
 import org.openhab.binding.connectedcar.internal.provider.ChannelDefinitions.ChannelIdMapEntry;
@@ -38,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link AccountHandler} implements the base for vehicle services.
+ * The {@link ApiBaseService} implements the base for vehicle services.
  *
  * @author Markus Michels - Initial contribution
  * @author Thomas Knaller - Maintainer
@@ -73,7 +72,7 @@ public class ApiBaseService {
         return enabled;
     }
 
-    // will be overload by service
+    // will be overloaded by service
     public boolean createChannels(Map<String, ChannelIdMapEntry> channels) throws ApiException {
         return false;
     }
@@ -92,7 +91,7 @@ public class ApiBaseService {
             int httpCode = e.getApiResult().httpCode;
             if (e.isSecurityException()) {
                 enabled = false;
-                logger.debug("Service {} is not available!", serviceId);
+                logger.debug("Service {} is not available!", serviceId);
             } else if (httpCode == HttpStatus.NO_CONTENT_204) {
                 logger.debug("Service {} returned NO_CONTENT (204)", serviceId);
             }
@@ -100,7 +99,7 @@ public class ApiBaseService {
         return false;
     }
 
-    // will be overload by service
+    // will be overloaded by service
     public boolean serviceUpdate() throws ApiException {
         return false;
     }
@@ -157,8 +156,7 @@ public class ApiBaseService {
                 double converted = ImperialUnits.MILE.getConverterToAny(KILOMETRE).convert(value).doubleValue();
                 return "US".equalsIgnoreCase(getConfig().api.xcountry) ? converted : value;
             }
-        } catch (IncommensurableException e) {
-
+        } catch (IncommensurableException ignored) {
         }
         return -1;
     }

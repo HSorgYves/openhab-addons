@@ -35,8 +35,6 @@ import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WC
 import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WCChargePayRecordResponse;
 import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WCChargePayRecordResponse.WeChargePayRecord;
 import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WCChargingHistory;
-import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WCHomeSessionsResponse;
-import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WCHomeSessionsResponse.WeChargeHomeSession;
 import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WCRfidCardsResponse;
 import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WCStationDetails;
 import org.openhab.binding.connectedcar.internal.api.wecharge.WeChargeJsonDTO.WCStationList;
@@ -72,13 +70,13 @@ public class WeChargeApi extends ApiWithOAuth implements BrandAuthenticator {
     }
 
     @Override
-    public String getHomeReguionUrl() {
+    public String getHomeRegionUrl() {
         return getApiUrl();
     }
 
     @Override
     public ArrayList<String> getVehicles() throws ApiException {
-        String json = callApi("", "home-charging/v1/stations?limit=10", crerateParameters().getHeaders(),
+        String json = callApi("", "home-charging/v1/stations?limit=10", createParameters().getHeaders(),
                 "getStationList", String.class);
         WCStationList stations = fromJson(gson, json, WCStationList.class);
         ArrayList<String> list = new ArrayList<String>();
@@ -121,12 +119,12 @@ public class WeChargeApi extends ApiWithOAuth implements BrandAuthenticator {
         logger.debug("{}: Updating WeCharge status", thingId);
         status.station = getStationDetails(config.vehicle.vin);
         status.stationId = status.station.id;
-        if (status.subscriptions.size() == 0) {
+        if (status.subscriptions.isEmpty()) {
             loadSubscriptions(status); // subscriptions + tariffs
             loadRfidCards(status);
         }
 
-        // Load charing records
+        // Load sharing records
         loadHomeSession(status);
         loadHomeChargingData(status);
         loadPayChargingData(status);
@@ -169,17 +167,17 @@ public class WeChargeApi extends ApiWithOAuth implements BrandAuthenticator {
                             + Instant.now().toString(),
                     "getChargingHistory", WCChargingHistory.class);
             WCChargingHistory history = status.chargingHistory;
-            if (history.totalCount > 0 || history.totalEngergyWh > 0) {
+            if (history.totalCount > 0 || history.totalEnergyWh > 0) {
                 return history;
             }
-            status.chargerPro = false; // disable fruther calls
+            status.chargerPro = false; // disable further calls
         }
         return new WCChargingHistory();
     }
 
     private void restartStation(String stationId) throws ApiException {
-        String json = http.post("home-charging/v1/stations/" + stationId + "/reboot", crerateParameters().getHeaders(),
-                "{\"reboot_mode\":\"immediate\"}").response;
+        http.post("home-charging/v1/stations/" + stationId + "/reboot", createParameters().getHeaders(),
+                "{\"reboot_mode\":\"immediate\"}");
     }
 
     private void loadHomeChargingData(WeChargeStatus status) throws ApiException {
@@ -201,21 +199,21 @@ public class WeChargeApi extends ApiWithOAuth implements BrandAuthenticator {
     }
 
     private void loadHomeSession(WeChargeStatus status) throws ApiException {
-        WCHomeSessionsResponse sessions = wcRequest(
-                "/home-charging/v1/charging/sessions?station_id=" + chargerStatus.stationId + "&limit=5&offset=0",
-                "getHomeChargingSessions", WCHomeSessionsResponse.class);
-        for (WeChargeHomeSession s : sessions.chargingSessions) {
-            // we are still lacking the format
-        }
+        // WCHomeSessionsResponse sessions = wcRequest(
+        // "/home-charging/v1/charging/sessions?station_id=" + chargerStatus.stationId + "&limit=5&offset=0",
+        // "getHomeChargingSessions", WCHomeSessionsResponse.class);
+        // for (WeChargeHomeSession s : sessions.chargingSessions) {
+        // we are still lacking the format
+        // }
     }
 
-    protected ApiHttpMap crerateParameters() throws ApiException {
+    protected ApiHttpMap createParameters() throws ApiException {
         return new ApiHttpMap().headers(config.api.stdHeaders)
                 .header(HttpHeader.AUTHORIZATION, "Bearer " + createAccessToken())
                 .header("wc_access_token", getWcAccessToken());
     }
 
     private <T> T wcRequest(String uri, String function, Class<T> classOfT) throws ApiException {
-        return callApi("", uri, crerateParameters().getHeaders(), "getLocationList", classOfT);
+        return callApi("", uri, createParameters().getHeaders(), "getLocationList", classOfT);
     }
 }

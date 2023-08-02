@@ -35,7 +35,6 @@ import com.google.gson.JsonSyntaxException;
 @NonNullByDefault
 public class ApiException extends Exception {
     private static final long serialVersionUID = -5809459454769761821L;
-    private static String NONE = "none";
 
     private ApiResult apiResult = new ApiResult();
 
@@ -76,7 +75,7 @@ public class ApiException extends Exception {
                 message = MessageFormat.format("Unable to connect to {0} (unknown host / internet connection down)",
                         string[1]);
             } else if (clazz == MalformedURLException.class) {
-                message = MessageFormat.format("Invalid URL: '{0}'", message);
+                message = MessageFormat.format("Invalid URL: {0}", message);
             } else {
                 if (isConfigurationException() || isSecurityException()) {
                     message = nonNullString(cause.getMessage());
@@ -154,7 +153,7 @@ public class ApiException extends Exception {
     }
 
     private boolean isEmpty() {
-        return NONE.equals(nonNullString(super.getMessage()));
+        return "none".equals(nonNullString(super.getMessage()));
     }
 
     private static String nonNullString(@Nullable String s) {

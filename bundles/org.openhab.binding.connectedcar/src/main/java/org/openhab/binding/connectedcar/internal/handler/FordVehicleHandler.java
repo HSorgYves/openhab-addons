@@ -15,14 +15,12 @@ package org.openhab.binding.connectedcar.internal.handler;
 import static org.openhab.binding.connectedcar.internal.BindingConstants.*;
 
 import java.time.ZoneId;
-import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.connectedcar.internal.api.ApiException;
 import org.openhab.binding.connectedcar.internal.api.fordpass.FPServiceStatus;
 import org.openhab.binding.connectedcar.internal.provider.CarChannelTypeProvider;
 import org.openhab.binding.connectedcar.internal.provider.ChannelDefinitions;
-import org.openhab.binding.connectedcar.internal.provider.ChannelDefinitions.ChannelIdMapEntry;
 import org.openhab.binding.connectedcar.internal.util.TextResources;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.thing.ChannelUID;
@@ -47,11 +45,6 @@ public class FordVehicleHandler extends ThingBaseHandler {
         super(thing, resources, zoneId, idMapper, channelTypeProvider);
     }
 
-    @Override
-    public boolean createBrandChannels(Map<String, ChannelIdMapEntry> channels) {
-        return false;
-    }
-
     /**
      * Register all available services
      */
@@ -67,7 +60,7 @@ public class FordVehicleHandler extends ThingBaseHandler {
         boolean processed = true;
         String action = "";
         String actionStatus = "";
-        boolean switchOn = (command instanceof OnOffType) && (OnOffType) command == OnOffType.ON;
+        boolean switchOn = command == OnOffType.ON;
         logger.debug("{}: Channel {} received command {}", thingId, channelId, command);
         try {
             switch (channelId) {
@@ -89,7 +82,7 @@ public class FordVehicleHandler extends ThingBaseHandler {
             throw e;
         }
 
-        if (processed && !action.isEmpty()) {
+        if (processed) {
             logger.debug("{}: Action {} submitted, initial status={}", thingId, action, actionStatus);
         }
         return processed;

@@ -20,6 +20,7 @@ import java.net.CookieStore;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -74,74 +75,53 @@ public class ApiHttpClient {
     }
 
     /**
-     * Sends a HTTP GET request using the synchronous client
+     * Sends an HTTP GET request using the synchronous client
      *
-     * @param path Path of the requested resource
      * @return response
      */
     public ApiResult get(String uri, Map<String, String> headers, String token) throws ApiException {
         headers.put(HttpHeader.AUTHORIZATION.toString(), "Bearer " + token);
-        return request(HttpMethod.GET, uri, "", headers, "", "", token);
-    }
-
-    public ApiResult get(String uri, Map<String, String> headers, boolean followRedirect) throws ApiException {
-        return request(HttpMethod.GET, uri, "", headers, "", "", "", followRedirect);
+        return request(HttpMethod.GET, uri, "", headers, "", "");
     }
 
     public ApiResult get(String uri, Map<String, String> headers) throws ApiException {
-        return request(HttpMethod.GET, uri, "", headers, "", "", "");
+        return request(HttpMethod.GET, uri, "", headers, "", "");
     }
 
     public ApiResult get(String uri, String vin, Map<String, String> headers) throws ApiException {
-        return request(HttpMethod.GET, uri, "", headers, "", vin, "");
+        return request(HttpMethod.GET, uri, "", headers, "", vin);
     }
 
     /**
-     * Sends a HTTP PUT request using the synchronous client
+     * Sends an HTTP PUT request using the synchronous client
      *
-     * @param path Path of the requested resource
      * @return response
      */
     public ApiResult put(String uri, Map<String, String> headers, String data) throws ApiException {
-        return request(HttpMethod.PUT, uri, "", headers, data, "", "", false);
+        return request(HttpMethod.PUT, uri, "", headers, data, "");
     }
 
     /**
-     * Sends a HTTP POST request using the synchronous client
+     * Sends an HTTP POST request using the synchronous client
      *
-     * @param path Path of the requested resource
      * @return response
      */
-    public ApiResult post(String uri, String parms, Map<String, String> headers, String data) throws ApiException {
-        return request(HttpMethod.POST, uri, parms, headers, data, "", "", false);
+    public ApiResult post(String uri, String params, Map<String, String> headers, String data) throws ApiException {
+        return request(HttpMethod.POST, uri, params, headers, data, "");
     }
 
     public ApiResult post(String uri, Map<String, String> headers, String data) throws ApiException {
-        return request(HttpMethod.POST, uri, "", headers, data, "", "", false);
-    }
-
-    public ApiResult post(String uri, Map<String, String> headers, String data, String token) throws ApiException {
-        return request(HttpMethod.POST, uri, "", headers, data, "", token, false);
+        return request(HttpMethod.POST, uri, "", headers, data, "");
     }
 
     public ApiResult post(String uri, Map<String, String> headers, Map<String, String> data, boolean json)
             throws ApiException {
-        return request(HttpMethod.POST, uri, "", headers, buildPostData(data, json), "", "", false);
+        return request(HttpMethod.POST, uri, "", headers, buildPostData(data, json), "");
     }
 
-    public ApiResult post(String uri, Map<String, String> headers, Map<String, String> data, boolean json,
-            boolean followRedirect) throws ApiException {
-        return request(HttpMethod.POST, uri, "", headers, buildPostData(data, json), "", "", followRedirect);
-    }
-
-    public ApiResult post(String uri, String vin, Map<String, String> headers, Map<String, String> data, boolean json,
-            boolean followRedirect) throws ApiException {
-        return request(HttpMethod.POST, uri, "", headers, buildPostData(data, json), vin, "", followRedirect);
-    }
-
-    private ApiResult request(HttpMethod method, String uri, String parms, Map<String, String> headers, String data,
-            String pvin, String token) throws ApiException {
-        return request(method, uri, parms, headers, data, pvin, token, true);
+    public ApiResult post(String uri, String vin, Map<String, String> headers, Map<String, String> data, boolean json)
+            throws ApiException {
+        return request(HttpMethod.POST, uri, "", headers, buildPostData(data, json), vin);
     }
 
     /**
@@ -150,24 +130,22 @@ public class ApiHttpClient {
      * @param method HTTP method (GET/POST)
      * @param uri URL of URI. A complete URL will be created based on the brand if only a URI is given
      *            url
-     * @param parms Paremeters will be added to the URL
+     * @param params Parameters will be added to the URL
      * @param headers HTTP headers, additional headers might be added depending on content type
      * @param data Body field, gets formatted according content type (form encoded vs. JSON format)
      * @param pvin The account handler specifies a specific VIN, if empty config.vehicle.vin will be used
-     * @param token Bearer or security token (or empty)
      * @return Returns the HTTP response. In additional lastHttpHeaders get filled with the http response headers
-     * @throws ApiException
      */
-    public ApiResult request(HttpMethod method, String uri, String parms, Map<String, String> headers, String data,
-            String pvin, String token, boolean followRedirect) throws ApiException {
+    public ApiResult request(HttpMethod method, String uri, String params, Map<String, String> headers, String data,
+            String pvin) throws ApiException {
         Request request = null;
         String url = "";
         try {
             String vin = pvin.isEmpty() ? config.vehicle.vin : pvin;
-            url = getBrandUrl(uri, parms, vin);
+            url = getBrandUrl(uri, params, vin);
             ApiResult apiResult = new ApiResult(method.toString(), url);
             request = httpClient.newRequest(url).method(method).timeout(API_TIMEOUT_MS, TimeUnit.MILLISECONDS);
-            fillHttpHeaders(request, headers, token);
+            fillHttpHeaders(request, headers);
             fillPostData(request, data);
 
             // Do request and get response
@@ -183,13 +161,13 @@ public class ApiHttpClient {
             if (apiResult.rateLimit > 0) {
                 logger.debug("{}: Remaining rate limit = {}", config.vehicle.vin, apiResult.rateLimit);
                 if (eventListener != null) {
-                    eventListener.onRateLimit(apiResult.rateLimit);
+                    Objects.requireNonNull(eventListener).onRateLimit(apiResult.rateLimit);
                 }
             }
 
             // validate response, API errors are reported as Json
             String response = apiResult.response.replaceAll("[\r\n\t]", "");
-            logger.debug("{}: HTTP {} Response: {}", config.getLogId(), apiResult.httpCode, response);
+            logger.debug("{}: HTTP {} Response: {}", config.getLogId(), apiResult.httpCode, response);
             logger.trace("  Headers: \n{}", apiResult.responseHeaders);
             String location = apiResult.getLocation();
             switch (apiResult.httpCode) {
@@ -234,22 +212,22 @@ public class ApiHttpClient {
     }
 
     /**
-     * Constructs an URL from the stored information, a specified path and a specified argument string
-     *
+     * Constructs a URL from the stored information, a specified path and a specified argument string
      */
     private String getBrandUrl(String template, String args, String vin) throws ApiException {
         if (config.api.brand.isEmpty()) {
             throw new ApiException(String.format("Brand for API access not set (%s)", config.api.brand));
         }
         String path = MessageFormat.format(template, config.api.brand, config.api.xcountry, vin, config.user.id);
+        String fullpath = path + (!args.isEmpty() ? "?" + args : "");
         if (!template.contains("://")) { // not a full URL
-            return getUrl(path.isEmpty() ? path : path + (!args.isEmpty() ? "?" + args : ""));
+            return getUrl(path.isEmpty() ? path : fullpath);
         } else {
-            return path + (!args.isEmpty() ? "?" + args : "");
+            return fullpath;
         }
     }
 
-    public static void fillHttpHeaders(Request request, Map<String, String> headers, String token) {
+    public static void fillHttpHeaders(Request request, Map<String, String> headers) {
         for (Map.Entry<String, String> h : headers.entrySet()) {
             String key = h.getKey();
             String value = h.getValue();
@@ -266,9 +244,8 @@ public class ApiHttpClient {
     }
 
     /**
-     * Fill standad http headers
+     * Fill standard http headers
      *
-     * @param HTTP header fields to insert
      * @param token Access token (bearer), might be empty
      * @return Updated headers
      */
@@ -283,7 +260,7 @@ public class ApiHttpClient {
         headers.put(HttpHeader.ACCEPT.toString(),
                 "application/json, application/vnd.volkswagenag.com-error-v1+json, */*");
         headers.put(HttpHeader.ACCEPT_CHARSET.toString(), StandardCharsets.UTF_8.toString());
-        if (!headers.containsKey(HttpHeaders.AUTHORIZATION.toString())) {
+        if (!headers.containsKey(HttpHeaders.AUTHORIZATION)) {
             headers.put(HttpHeader.AUTHORIZATION.toString(), "Bearer " + token);
         }
         return headers;
@@ -320,20 +297,20 @@ public class ApiHttpClient {
      * @return formatted body
      */
     public static String buildPostData(Map<String, String> dataMap, boolean json) {
-        String data = "";
+        StringBuilder data = new StringBuilder();
         for (Map.Entry<String, String> e : dataMap.entrySet()) {
-            data = data + (data.isEmpty() ? "" : json ? ", " : "&");
+            data.append((data.length() == 0) ? "" : json ? ", " : "&");
             if (!json) {
-                data = data + e.getKey() + "=" + e.getValue();
+                data.append(e.getKey()).append("=").append(e.getValue());
             } else {
-                data = data + "\"" + e.getKey() + "\" : \"" + e.getValue() + "\"";
+                data.append("\"").append(e.getKey()).append("\" : \"").append(e.getValue()).append("\"");
             }
         }
-        return json ? "{ " + data + " }" : data;
+        return json ? "{ " + data + " }" : data.toString();
     }
 
     /**
-     * Constructs an URL from the stored information and a specified path
+     * Constructs a URL from the stored information and a specified path
      *
      * @param path Path to include in URL
      * @return URL
@@ -348,7 +325,6 @@ public class ApiHttpClient {
      * Build URL base depending on brand
      *
      * @return URL prefix/base url
-     * @throws ApiException
      */
     public String getBaseUrl() throws ApiException {
         if (!config.vstatus.apiUrlPrefix.isEmpty()) {
@@ -367,13 +343,13 @@ public class ApiHttpClient {
      * @param parameter Parameter name
      * @return Extracted value
      */
-    public static String getUrlParm(String input, String parameter) {
-        String p = getUrlParm(input, parameter, "?");
-        return !p.isEmpty() ? p : getUrlParm(input, parameter, "&");
+    public static String getUrlParam(String input, String parameter) {
+        String p = getUrlParam(input, parameter, "?");
+        return !p.isEmpty() ? p : getUrlParam(input, parameter, "&");
     }
 
-    public static String getUrlParm(String input, String parameter, String seperator) {
-        String pattern = seperator + parameter + "=";
+    public static String getUrlParam(String input, String parameter, String separator) {
+        String pattern = separator + parameter + "=";
         if (input.contains(pattern)) {
             String res = substringAfter(input, pattern);
             return res.contains("&") ? substringBefore(res, "&") : res;

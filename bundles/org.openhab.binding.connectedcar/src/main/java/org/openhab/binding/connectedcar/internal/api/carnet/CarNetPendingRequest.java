@@ -30,12 +30,13 @@ import org.slf4j.LoggerFactory;
  */
 @NonNullByDefault
 public class CarNetPendingRequest extends ApiActionRequest {
-    private final Logger logger = LoggerFactory.getLogger(CarNetPendingRequest.class);
+    // private final Logger logger = LoggerFactory.getLogger(CarNetPendingRequest.class);
 
     public CarNetPendingRequest(String service, String action, CNActionResponse rsp) {
-        // normalize the resonse type
+        // normalize the response type
         this.service = service;
         this.action = action;
+        Logger logger = LoggerFactory.getLogger(CarNetPendingRequest.class);
         switch (service) {
             case CNAPI_SERVICE_VEHICLE_STATUS_REPORT:
                 this.requestId = rsp.currentVehicleDataResponse.requestId;

@@ -61,12 +61,7 @@ public class CarNetServiceRLU extends ApiBaseService {
     public boolean serviceUpdate() throws ApiException {
         boolean updated = false;
         CarNetRluHistory hist = ((CarNetApi) api).getRluActionHistory();
-        Collections.sort(hist.actions.action, Collections.reverseOrder(new Comparator<CarNetRluLockAction>() {
-            @Override
-            public int compare(CarNetRluLockAction a, CarNetRluLockAction b) {
-                return a.timestamp.compareTo(b.timestamp);
-            }
-        }));
+        hist.actions.action.sort(Collections.reverseOrder(Comparator.comparing(a -> a.timestamp)));
 
         int i = 0;
         int count = getConfig().vehicle.numRluHistory;

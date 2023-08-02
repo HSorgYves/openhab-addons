@@ -73,11 +73,10 @@ public class OpenStreetMapApiDTO {
             headers.put(HttpHeader.ACCEPT.toString(), CONTENT_TYPE_JSON);
             String json = http.get(url, headers).response;
             OSMPointResponse r = fromJson(gson, json, OSMPointResponse.class);
-            String address = getString(r.address.road) + ";" + getString(r.address.house_number) + ";"
+            return getString(r.address.road) + ";" + getString(r.address.house_number) + ";"
                     + getString(r.address.postcode) + ";" + getString(r.address.postcode) + ";"
                     + getString(r.address.town) + ";" + getString(r.address.village) + ";"
-                    + getString(r.address.country + ";" + getString(r.address.countryCocde));
-            return address;
+                    + getString(r.address.country) + ";" + getString(r.address.countryCocde);
         } catch (ApiException e) {
             logger.debug("OSM: Unable to lookup address for Geo position: {}", e.toString());
             return "";

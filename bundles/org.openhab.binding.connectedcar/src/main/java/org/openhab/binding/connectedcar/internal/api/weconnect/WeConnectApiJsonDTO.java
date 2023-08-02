@@ -314,6 +314,7 @@ public class WeConnectApiJsonDTO {
             public String carCapturedTimestamp;
             public String carType;
             public WCEngine primaryEngine;
+            public WCEngine secondaryEngine;
             public Integer totalRange_km;
         }
 

@@ -7,6 +7,7 @@
 	<bridge-type id="myaudi">
 		<label>myAudi Account (WeConnect)</label>
 		<description>This thing represents a myAudi WeConnect Account.</description>
+		<category>Car</category>
 
 		<config-description-ref uri="bridge-type:connectedcar:idaccount"/>
 	</bridge-type>
@@ -14,6 +15,7 @@
 	<bridge-type id="volkswagen">
 		<label>Volkswagen Account (CarNet)</label>
 		<description>This thing represents a VW CarNet Account.</description>
+		<category>Car</category>
 
 		<config-description-ref uri="bridge-type:connectedcar:cnaccount"/>
 	</bridge-type>
@@ -21,12 +23,15 @@
 	<bridge-type id="vwid">
 		<label>Volkswagen ID. Account (WeConnect)</label>
 		<description>This thing represents a WeConnect Account.</description>
+		<category>Car</category>
+
 		<config-description-ref uri="bridge-type:connectedcar:idaccount"/>
 	</bridge-type>
 
 	<bridge-type id="wecharge">
 		<label>Volkswagen ID.Charge Account (WeCharge)</label>
 		<description>This thing represents a VW WeCharge Account.</description>
+
 		<config-description-ref uri="bridge-type:connectedcar:wcaccount"/>
 	</bridge-type>
 
@@ -34,18 +39,23 @@
 	<bridge-type id="skoda">
 		<label>Škoda Connect Account (CarNet)</label>
 		<description>This thing represents a Škoda CarNet Account.</description>
+		<category>Car</category>
+
 		<config-description-ref uri="bridge-type:connectedcar:cnaccount"/>
 	</bridge-type>
 
 	<bridge-type id="skoda-e">
 		<label>Škoda Enyaq Account (Škoda-E)</label>
 		<description>This thing represents an account for Škoda electrical vehicles.</description>
+		<category>Car</category>
+
 		<config-description-ref uri="bridge-type:connectedcar:seaccount"/>
 	</bridge-type>
 
 	<bridge-type id="seat">
 		<label>SEAT Connect Account (CarNet)</label>
 		<description>This thing represents a SEAT CarNet Account.</description>
+		<category>Car</category>
 
 		<config-description-ref uri="bridge-type:connectedcar:cnaccount"/>
 	</bridge-type>
@@ -53,7 +63,9 @@
 	<bridge-type id="ford">
 		<label>Ford Account (FordPass)</label>
 		<description>This thing represents a FordPass Account.</description>
+		<category>Car</category>
 
 		<config-description-ref uri="bridge-type:connectedcar:fordaccount"/>
 	</bridge-type>
+
 </thing:thing-descriptions>

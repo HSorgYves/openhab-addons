@@ -130,8 +130,8 @@ The binding does a frequent recovery check (on each poll cycle) and re-connects 
 | numShortTrip        | Number of entries in the Short Trip History (one channel group each)      | no        | 1       |
 | numLongTrip         | Number of entries in the Long Trip History (one channel group each)       | no        | 1       |
 | numRluHistory       | Number of entries in the RLU History  (one channel group each)            | no        | 1       |
-| numDestinations     | Number of entries in the Destination History (one channel group each)     | no        | 1       |
 | numSpeedAlerts      | Number of entries in the Speed Alert History (one channel group each)     | no        | 1       |
+| numDestinations     | Number of entries in the Destination History (one channel group each)     | no        | 1       |
 | numGeoFenceAlerts   | Number of entries in the Geofence Alert History (one channel group each)  | no        | 1       |
 | pollingInterval     | Refresh interval in minutes for data refresh (CarNet is not event driven) | no        | 15      |
 
@@ -296,7 +296,7 @@ The following channels are available depending on the vehicle type:
 |              | speedAlertLimit         | Number:Speed             | yes       | Exceeded Speed Limit                                                                    |
 |              | speedAlertDescr         | String                   | yes       | Name of Alert Definition                                                                |
 |              | geoFenceAlertDescr      | String                   | yes       | Name of Alert Definition                                                                |
-| destination  | destinationPoi          | String                   | yes       | Name of the Point-of-Interest (is this destination has one)                             |
+| destination1 | destinationPoi          | String                   | yes       | Name of the Point-of-Interest (is this destination has one)                             |
 |              | destinationZip          | String                   | yes       | The zip code of the destination address, might be empty                                 |
 |              | destinationCity         | String                   | yes       | City of the destination address, might be empty                                         |
 |              | destinationName         | String                   | yes       | The textual description of this destination, might be empty                             |

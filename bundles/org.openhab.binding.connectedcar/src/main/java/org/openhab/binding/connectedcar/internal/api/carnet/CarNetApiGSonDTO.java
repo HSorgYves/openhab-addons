@@ -347,9 +347,16 @@ public class CarNetApiGSonDTO {
         CarNetVehicleData vehicleData;
     }
 
+    // {"userVehicles":{"userId":"xxx","vehicle": [{"homeRegionId":"ICTO-25343","content":"VSSZZZKL5RR0xxxxx"}]}}
     public static class CarNetVehicleList {
         public static class CNVehicles {
-            public ArrayList<String> vehicle;
+            public static class CNVehiclesEntry {
+                public String homeRegionId;
+                public String content;
+            }
+
+            public ArrayList<CNVehiclesEntry> vehicle;
+            public String userId;
         }
 
         public CNVehicles userVehicles;

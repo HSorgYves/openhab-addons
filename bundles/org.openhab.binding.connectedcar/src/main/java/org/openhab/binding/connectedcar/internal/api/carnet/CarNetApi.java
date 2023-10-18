@@ -78,6 +78,7 @@ import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.Car
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CarNetPersonalData;
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CarNetTripData;
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CarNetVehicleList;
+import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CarNetVehicleList.CNVehicles.CNVehiclesEntry;
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CarNetVehicleStatus;
 import org.openhab.binding.connectedcar.internal.config.CombinedConfig;
 import org.openhab.binding.connectedcar.internal.handler.ThingHandlerInterface;
@@ -162,6 +163,12 @@ public class CarNetApi extends ApiWithOAuth {
         return jwt.sub;// get identity from JWT sub
     }
 
+    public String getAccessIdentity() throws ApiException {
+        String accessToken = createAccessToken();
+        JwtToken jwt = decodeJwt(accessToken);
+        return jwt.sub;
+    }
+
     public String getProfileUrl() throws ApiException {
         if (config.user.identity.isEmpty()) {
             config.user.identity = getUserIdentity();
@@ -198,12 +205,20 @@ public class CarNetApi extends ApiWithOAuth {
     @Override
     public ArrayList<String> getVehicles() throws ApiException {
         // return callApi("https://msg.volkswagen.de/fs-car/usermanagement/users/v1/{0}/{1}/vehicles", "getVehicles",
-        CarNetVehicleList vehicles = callApi("usermanagement/users/v1/{0}/{1}/vehicles", "getVehicles",
-                CarNetVehicleList.class);
+        // CarNetVehicleList vehicles = callApi("usermanagement/users/v1/{0}/{1}/vehicles", "getVehicles",
+        // CarNetVehicleList.class);
+        CarNetVehicleList vehicles = callApi(
+                "https://mal-3a.prd.eu.dp.vwg-connect.com/api/usermanagement/users/v2/users/" + getAccessIdentity()
+                        + "/vehicles",
+                "getVehicles", CarNetVehicleList.class);
         if (vehicles.userVehicles != null && vehicles.userVehicles.vehicle != null) {
-            return vehicles.userVehicles.vehicle;
+            ArrayList<String> vins = new ArrayList<String>();
+            for (CNVehiclesEntry entry : vehicles.userVehicles.vehicle) {
+                vins.add(entry.content);
+            }
+            return vins;
         }
-        throw new ApiException("Account has no registered vehicles, go to online port and add at least 1 vehicle");
+        throw new ApiException("Account has no registered vehicles, go to online portal and add at least 1 vehicle");
     }
 
     @Override

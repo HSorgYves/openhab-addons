@@ -333,7 +333,7 @@ public class ApiHttpClient {
         if (!config.api.apiDefaultUrl.isEmpty()) {
             return config.api.apiDefaultUrl;
         }
-        throw new ApiException("Unknown  base URL for brand URL");
+        throw new ApiException("Unknown base URL for brand URL");
     }
 
     /**

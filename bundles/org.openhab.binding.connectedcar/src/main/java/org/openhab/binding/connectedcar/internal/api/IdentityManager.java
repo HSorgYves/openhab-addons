@@ -116,7 +116,7 @@ public class IdentityManager {
 
         tokens.idToken = authenticator.login(url, oauth);
 
-        logger.debug("{}: Login successful, grating API access", config.getLogId());
+        logger.debug("{}: Login successful, granting API access", config.getLogId());
         tokens.apiToken = authenticator.grantAccess(oauth);
         logger.debug("{}: accessToken was created, valid for {}sec", config.getLogId(), tokens.apiToken.validity);
         if (tokens.apiToken.accessToken.isEmpty() && tokens.idToken.idToken.isEmpty()) {

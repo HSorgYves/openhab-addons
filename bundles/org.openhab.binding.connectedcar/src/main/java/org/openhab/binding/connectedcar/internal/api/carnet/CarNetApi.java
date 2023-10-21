@@ -381,7 +381,7 @@ public class CarNetApi extends ApiWithOAuth {
                             + duration + "}}}"
                     : "{\"performAction\":{\"quickstop\":{\"active\":false}}}";
         }
-        return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/climater/actions", CNAPI_SERVICE_REMOTE_HEATING, action, true,
+        return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/action", CNAPI_SERVICE_REMOTE_HEATING, action, true,
                 contentType, body);
     }
 

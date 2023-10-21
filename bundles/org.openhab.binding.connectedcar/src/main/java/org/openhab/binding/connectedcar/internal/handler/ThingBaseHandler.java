@@ -650,6 +650,7 @@ public abstract class ThingBaseHandler extends BaseThingHandler implements Accou
     public boolean publishState(String channelId, State value) {
         if (!stopping && isLinked(channelId)) {
             updateState(channelId, value);
+            logger.debug("{}: call updateState for {} with {} (type {}).", thingId, channelId, value, value.getClass());
             return true;
         }
         return false;

@@ -41,6 +41,7 @@ public class BrandCarNetVW extends CarNetApi implements BrandAuthenticator {
         properties.clientId = "9496332b-ea03-4091-a224-8c746b885068@apps_vw-dilab_com";
         properties.xClientId = "38761134-34d0-41f3-9a73-c4be88d7d337";
         properties.authScope = "openid profile mbb cars address";
+        properties.authScope = "openid profile mbb cars address email birthdate badge vin";
         properties.apiDefaultUrl = CNAPI_DEFAULT_API_URL;
         properties.tokenUrl = CNAPI_VW_TOKEN_URL;
         properties.tokenRefreshUrl = properties.tokenUrl;

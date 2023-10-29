@@ -51,11 +51,11 @@ public class BrandSkodaE extends SkodaEApi implements BrandAuthenticator {
         properties.brand = API_BRAND_SKODA_E;
         properties.xcountry = "CZ";
         properties.clientId = "f9a2359a-b776-46d9-bd0c-db1904343117@apps_vw-dilab_com";
-        properties.xClientId = "28cd30c6-dee7-4529-a0e6-b1e07ff90b79";
+        properties.xClientId = "afb0473b-6d82-42b8-bfea-cead338c46ef";
         properties.xrequest = "cz.skodaauto.connect";
         properties.redirect_uri = "skodaconnect://oidc.login/";
         properties.responseType = "code token id_token";
-        properties.authScope = "openid profile";
+        properties.authScope = "openid mbb profile";
         properties.tokenUrl = CNAPI_VW_TOKEN_URL;
         properties.tokenRefreshUrl = "https://tokenrefreshservice.apps.emea.vwapps.io";
         properties.xappVersion = "3.2.6";

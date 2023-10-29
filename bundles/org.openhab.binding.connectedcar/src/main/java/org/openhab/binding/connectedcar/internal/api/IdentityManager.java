@@ -198,7 +198,7 @@ public class IdentityManager {
         CarNetSecurityPinAuthInfo authInfo = fromJson(gson, json, CarNetSecurityPinAuthInfo.class);
         String pinHash = sha512(config.vehicle.pin, authInfo.securityPinAuthInfo.securityPinTransmission.challenge)
                 .toUpperCase();
-        logger.debug("{}: Authenticating SPIN, retires={}", config.getLogId(),
+        logger.debug("{}: Authenticating SPIN, retries={}", config.getLogId(),
                 authInfo.securityPinAuthInfo.remainingTries);
 
         // Request authentication

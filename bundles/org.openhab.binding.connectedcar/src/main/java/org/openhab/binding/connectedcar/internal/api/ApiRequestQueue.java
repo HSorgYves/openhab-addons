@@ -162,6 +162,7 @@ public class ApiRequestQueue {
                     case API_REQUEST_IN_PROGRESS:
                     case API_REQUEST_QUEUED:
                     case API_REQUEST_FETCHED:
+                    case API_REQUEST_DELAYED:
                     case API_REQUEST_STARTED:
                         actionStatus = API_REQUEST_IN_PROGRESS; // normalize status
                         break;

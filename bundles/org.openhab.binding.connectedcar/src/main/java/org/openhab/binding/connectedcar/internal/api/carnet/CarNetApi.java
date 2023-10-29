@@ -370,9 +370,10 @@ public class CarNetApi extends ApiWithOAuth {
         if (config.account.apiLevelVentilation == 1) {
             // Version 2.0 format
             contentType = "application/vnd.vwg.mbb.RemoteStandheizung_v2_0_0+xml";
-            body = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
-                    + "<performAction xmlns=\"http://audi.de/connect/rs\"><quickstart>" + "<active>"
-                    + (start ? "true" : "false") + "</active>" + "</quickstart></performAction>";
+            body = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><performAction xmlns=\"http://audi.de/connect/rs\">"
+                    + (start ? "<quickstart><active>true</active></quickstart>"
+                            : "<quickstop><active>false</active></quickstop>")
+                    + "</performAction>";
         } else {
             // Version 2.0.2 format
             contentType = "application/vnd.vwg.mbb.RemoteStandheizung_v2_0_2+json";
@@ -397,8 +398,6 @@ public class CarNetApi extends ApiWithOAuth {
                             + "</climatisationDuration>" + "<startMode>ventilation</startMode></quickstart>"
                             : "<quickstop><active>false</active></quickstop>")
                     + "</performAction>";
-            return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/climater/actions", CNAPI_SERVICE_REMOTE_HEATING, action,
-                    true, contentType, body);
         } else {
             // Version 2.0.2 format
             contentType = "application/vnd.vwg.mbb.RemoteStandheizung_v2_0_2+json";
@@ -406,9 +405,9 @@ public class CarNetApi extends ApiWithOAuth {
                     ? "{\"performAction\":{\"quickstart\":{\"startMode\":\"ventilation\",\"active\":true,\"climatisationDuration\":"
                             + duration + "}}}"
                     : "{\"performAction\":{\"quickstop\":{\"active\":false}}}";
-            return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/action", CNAPI_SERVICE_REMOTE_HEATING, action, true,
-                    contentType, body);
         }
+        return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/action", CNAPI_SERVICE_REMOTE_HEATING, action, true,
+                contentType, body);
     }
 
     @Override

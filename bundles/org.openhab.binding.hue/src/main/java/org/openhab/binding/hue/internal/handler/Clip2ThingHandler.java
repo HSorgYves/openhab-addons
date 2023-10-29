@@ -44,6 +44,7 @@ import org.openhab.binding.hue.internal.dto.clip2.MirekSchema;
 import org.openhab.binding.hue.internal.dto.clip2.ProductData;
 import org.openhab.binding.hue.internal.dto.clip2.Resource;
 import org.openhab.binding.hue.internal.dto.clip2.ResourceReference;
+import org.openhab.binding.hue.internal.dto.clip2.Resources;
 import org.openhab.binding.hue.internal.dto.clip2.enums.ActionType;
 import org.openhab.binding.hue.internal.dto.clip2.enums.EffectType;
 import org.openhab.binding.hue.internal.dto.clip2.enums.RecallAction;
@@ -299,19 +300,8 @@ public class Clip2ThingHandler extends BaseThingHandler {
     @Override
     public void handleCommand(ChannelUID channelUID, Command commandParam) {
         if (RefreshType.REFRESH.equals(commandParam)) {
-            if ((thing.getStatus() == ThingStatus.ONLINE) && updateDependenciesDone) {
-                Future<?> task = updateServiceContributorsTask;
-                if (Objects.isNull(task) || !task.isDone()) {
-                    cancelTask(updateServiceContributorsTask, false);
-                    updateServiceContributorsTask = scheduler.schedule(() -> {
-                        try {
-                            updateServiceContributors();
-                        } catch (ApiException | AssetNotLoadedException e) {
-                            logger.debug("{} -> handleCommand() error {}", resourceId, e.getMessage(), e);
-                        } catch (InterruptedException e) {
-                        }
-                    }, 3, TimeUnit.SECONDS);
-                }
+            if (thing.getStatus() == ThingStatus.ONLINE) {
+                refreshAllChannels();
             }
             return;
         }
@@ -507,7 +497,11 @@ public class Clip2ThingHandler extends BaseThingHandler {
         logger.debug("{} -> handleCommand() put resource {}", resourceId, putResource);
 
         try {
-            getBridgeHandler().putResource(putResource);
+            Resources resources = getBridgeHandler().putResource(putResource);
+            if (resources.hasErrors()) {
+                logger.info("Command '{}' for thing '{}', channel '{}' succeeded with errors: {}", command,
+                        thing.getUID(), channelUID, String.join("; ", resources.getErrors()));
+            }
         } catch (ApiException | AssetNotLoadedException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("{} -> handleCommand() error {}", resourceId, e.getMessage(), e);
@@ -517,6 +511,21 @@ public class Clip2ThingHandler extends BaseThingHandler {
             }
         } catch (InterruptedException e) {
         }
+    }
+
+    private void refreshAllChannels() {
+        if (!updateDependenciesDone) {
+            return;
+        }
+        cancelTask(updateServiceContributorsTask, false);
+        updateServiceContributorsTask = scheduler.schedule(() -> {
+            try {
+                updateServiceContributors();
+            } catch (ApiException | AssetNotLoadedException e) {
+                logger.debug("{} -> handleCommand() error {}", resourceId, e.getMessage(), e);
+            } catch (InterruptedException e) {
+            }
+        }, 3, TimeUnit.SECONDS);
     }
 
     /**
@@ -894,11 +903,7 @@ public class Clip2ThingHandler extends BaseThingHandler {
                 }
             } else if (thing.getStatus() != ThingStatus.ONLINE) {
                 updateStatus(ThingStatus.ONLINE);
-                // issue REFRESH command to update all channels
-                Channel lastUpdateChannel = thing.getChannel(CHANNEL_2_LAST_UPDATED);
-                if (Objects.nonNull(lastUpdateChannel)) {
-                    handleCommand(lastUpdateChannel.getUID(), RefreshType.REFRESH);
-                }
+                refreshAllChannels();
             }
         }
     }

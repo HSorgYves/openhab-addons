@@ -78,6 +78,7 @@ import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.Car
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CarNetPersonalData;
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CarNetTripData;
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CarNetVehicleList;
+import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CarNetVehicleList.CNVehicles.CNVehiclesEntry;
 import org.openhab.binding.connectedcar.internal.api.carnet.CarNetApiGSonDTO.CarNetVehicleStatus;
 import org.openhab.binding.connectedcar.internal.config.CombinedConfig;
 import org.openhab.binding.connectedcar.internal.handler.ThingHandlerInterface;
@@ -162,6 +163,12 @@ public class CarNetApi extends ApiWithOAuth {
         return jwt.sub;// get identity from JWT sub
     }
 
+    public String getAccessIdentity() throws ApiException {
+        String accessToken = createAccessToken();
+        JwtToken jwt = decodeJwt(accessToken);
+        return jwt.sub;
+    }
+
     public String getProfileUrl() throws ApiException {
         if (config.user.identity.isEmpty()) {
             config.user.identity = getUserIdentity();
@@ -198,12 +205,20 @@ public class CarNetApi extends ApiWithOAuth {
     @Override
     public ArrayList<String> getVehicles() throws ApiException {
         // return callApi("https://msg.volkswagen.de/fs-car/usermanagement/users/v1/{0}/{1}/vehicles", "getVehicles",
-        CarNetVehicleList vehicles = callApi("usermanagement/users/v1/{0}/{1}/vehicles", "getVehicles",
-                CarNetVehicleList.class);
+        // CarNetVehicleList vehicles = callApi("usermanagement/users/v1/{0}/{1}/vehicles", "getVehicles",
+        // CarNetVehicleList.class);
+        CarNetVehicleList vehicles = callApi(
+                "https://mal-3a.prd.eu.dp.vwg-connect.com/api/usermanagement/users/v2/users/" + getAccessIdentity()
+                        + "/vehicles",
+                "getVehicles", CarNetVehicleList.class);
         if (vehicles.userVehicles != null && vehicles.userVehicles.vehicle != null) {
-            return vehicles.userVehicles.vehicle;
+            ArrayList<String> vins = new ArrayList<String>();
+            for (CNVehiclesEntry entry : vehicles.userVehicles.vehicle) {
+                vins.add(entry.content);
+            }
+            return vins;
         }
-        throw new ApiException("Account has no registered vehicles, go to online port and add at least 1 vehicle");
+        throw new ApiException("Account has no registered vehicles, go to online portal and add at least 1 vehicle");
     }
 
     @Override
@@ -355,9 +370,10 @@ public class CarNetApi extends ApiWithOAuth {
         if (config.account.apiLevelVentilation == 1) {
             // Version 2.0 format
             contentType = "application/vnd.vwg.mbb.RemoteStandheizung_v2_0_0+xml";
-            body = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
-                    + "<performAction xmlns=\"http://audi.de/connect/rs\"><quickstart>" + "<active>"
-                    + (start ? "true" : "false") + "</active>" + "</quickstart></performAction>";
+            body = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><performAction xmlns=\"http://audi.de/connect/rs\">"
+                    + (start ? "<quickstart><active>true</active></quickstart>"
+                            : "<quickstop><active>false</active></quickstop>")
+                    + "</performAction>";
         } else {
             // Version 2.0.2 format
             contentType = "application/vnd.vwg.mbb.RemoteStandheizung_v2_0_2+json";
@@ -366,7 +382,7 @@ public class CarNetApi extends ApiWithOAuth {
                             + duration + "}}}"
                     : "{\"performAction\":{\"quickstop\":{\"active\":false}}}";
         }
-        return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/climater/actions", CNAPI_SERVICE_REMOTE_HEATING, action, true,
+        return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/action", CNAPI_SERVICE_REMOTE_HEATING, action, true,
                 contentType, body);
     }
 
@@ -382,8 +398,6 @@ public class CarNetApi extends ApiWithOAuth {
                             + "</climatisationDuration>" + "<startMode>ventilation</startMode></quickstart>"
                             : "<quickstop><active>false</active></quickstop>")
                     + "</performAction>";
-            return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/climater/actions", CNAPI_SERVICE_REMOTE_HEATING, action,
-                    true, contentType, body);
         } else {
             // Version 2.0.2 format
             contentType = "application/vnd.vwg.mbb.RemoteStandheizung_v2_0_2+json";
@@ -391,9 +405,9 @@ public class CarNetApi extends ApiWithOAuth {
                     ? "{\"performAction\":{\"quickstart\":{\"startMode\":\"ventilation\",\"active\":true,\"climatisationDuration\":"
                             + duration + "}}}"
                     : "{\"performAction\":{\"quickstop\":{\"active\":false}}}";
-            return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/action", CNAPI_SERVICE_REMOTE_HEATING, action, true,
-                    contentType, body);
         }
+        return sendAction("bs/rs/v1/{0}/{1}/vehicles/{2}/action", CNAPI_SERVICE_REMOTE_HEATING, action, true,
+                contentType, body);
     }
 
     @Override

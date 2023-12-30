@@ -117,7 +117,7 @@ public class CarNetVehicleHandler extends ThingBaseHandler {
                     break;
                 case CHANNEL_CONTROL_PREHEAT:
                     action = switchOn ? "startPreHeat" : "stopPreHeat";
-                    actionStatus = api.controlPreHeating(switchOn, 30);
+                    actionStatus = api.controlPreHeating(switchOn, getVentDuration());
                     break;
                 case CHANNEL_CONTROL_VENT:
                     action = switchOn ? "startVentilation" : "stopVentilation";

@@ -37,16 +37,16 @@ public class BrandCarNetSeat extends CarNetApi implements BrandAuthenticator {
         properties.brand = "VW"; // CNAPI_BRAND_SEAT;
         properties.xcountry = "ES";
         properties.apiDefaultUrl = CNAPI_DEFAULT_API_URL;
-        properties.clientId = "50f215ac-4444-4230-9fb1-fe15cd1a9bcc@apps_vw-dilab_com";
+        properties.clientId = "3c8e98bc-3ae9-4277-a563-d5ee65ddebba@apps_vw-dilab_com";
         properties.xClientId = "9dcc70f0-8e79-423a-a3fa-4065d99088b4";
-        properties.authScope = "openid profile mbb cars birthdate nickname address phone";
+        properties.authScope = "openid profile mbb cars birthdate nickname address phone email nationalIdentifier dealers badge nationality";
         properties.tokenUrl = CNAPI_VW_TOKEN_URL;
         properties.tokenRefreshUrl = properties.tokenUrl;
         properties.redirect_uri = "seatconnect://identity-kit/login";
-        properties.xrequest = "cz.skodaauto.connect";
+        // properties.xrequest = "cz.skodaauto.connect";
         properties.responseType = "code id_token";
-        properties.xappName = "SEATConnect";
-        properties.xappVersion = "1.1.29";
+        properties.xappName = "SEAT Connect";
+        properties.xappVersion = "1.11.2";
     }
 
     public BrandCarNetSeat(ThingHandlerInterface handler, ApiHttpClient httpClient, IdentityManager tokenManager,

@@ -146,8 +146,9 @@ public class WeConnectApi extends ApiWithOAuth implements BrandAuthenticator {
 
     private WCVehicleStatusData getWCStatus() throws ApiException {
         ApiHttpMap params = createParameters();
-        return callApi("", "vehicles/{2}/selectivestatus?jobs=all", params.getHeaders(), "getVehicleStatus",
-                WCVehicleStatusData.class);
+        return callApi("",
+                "vehicles/{2}/selectivestatus?jobs=access,charging,climatisation,climatisationTimers,fuelStatus,userCapabilities,vehicleLights,vehicleHealthInspection,oilLevel,measurements",
+                params.getHeaders(), "getVehicleStatus", WCVehicleStatusData.class);
     }
 
     @Override

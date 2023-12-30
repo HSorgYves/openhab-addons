@@ -63,6 +63,7 @@ public class ApiDataTypesDTO {
     public static final String API_REQUEST_FAIL = "request_fail";
     public static final String API_REQUEST_QUEUED = "queued"; // rclima
     public static final String API_REQUEST_FETCHED = "fetched"; // rclima
+    public static final String API_REQUEST_DELAYED = "delayed";
     public static final String API_REQUEST_STARTED = "request_started"; // rhonk
     public static final String API_REQUEST_FAILED = "failed";
     public static final String API_REQUEST_REJECTED = "rejected";
